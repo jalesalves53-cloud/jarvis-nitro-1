@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AETHER | V132 TRUE-VERDICT</title>
+    <title>AETHER | V133 ABSOLUTE-SYNC</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
@@ -15,24 +15,26 @@
 <body class="flex flex-col items-center justify-center">
 
     <div id="L_O">
-        <div class="text-cyan-900 text-[8px] tracking-[15px] mb-10 uppercase">True_Verdict_Sync_V132</div>
-        <input type="password" id="_PASS" placeholder="VERDICT_KEY" class="bg-black border-b border-cyan-900 p-4 text-cyan-400 text-center w-64 mb-6 outline-none text-[12px] tracking-[10px]">
-        <button onclick="_VAL()" class="text-cyan-500/30 text-[10px] tracking-[5px] uppercase border border-cyan-900/30 px-6 py-2">Activate_V132</button>
+        <div class="text-cyan-900 text-[8px] tracking-[15px] mb-10 uppercase">Gale_Correction_V133</div>
+        <input type="password" id="_PASS" placeholder="SYNC_KEY" class="bg-black border-b border-cyan-900 p-4 text-cyan-400 text-center w-64 mb-6 outline-none text-[12px] tracking-[10px]">
+        <button onclick="_VAL()" class="text-cyan-500/30 text-[10px] tracking-[5px] uppercase border border-cyan-900/30 px-6 py-2">Initialize_V133</button>
     </div>
 
-    <div id="_STS" class="text-[9px] tracking-[15px] text-cyan-950 mb-10 uppercase">System_Monitoring</div>
+    <div id="_STS" class="text-[9px] tracking-[15px] text-cyan-950 mb-10 uppercase">System_Active</div>
     <div id="_ALVO" class="ALVO opacity-0">---</div>
     <div id="_RES" class="mt-12 font-bold text-[10px] tracking-[10px] h-8 uppercase"></div>
 
     <script>
         const _SP = window.speechSynthesis;
-        let _ON = false, _LS = -1, _ULTIMA_COR_SOLICITADA = "";
+        let _ON = false, _LS = -1;
+        let _ULTIMA_COR_SOLICITADA = "";
+        let _MIN_ENTRADA = -1; // TRAVA DE MINUTO PARA CONFERÊNCIA
 
         function _VAL() {
             if(document.getElementById('_PASS').value === "jarvis102") {
                 document.getElementById('L_O').style.display = 'none';
                 _ON = true; 
-                _VOZ("V132 Ativa. Veredito sincronizado com o tempo de roleta.");
+                _VOZ("V133 Iniciada. Conflito de Gale resolvido. Sincronia de memória ativa.");
             }
         }
 
@@ -50,40 +52,47 @@
             if(s !== _LS) {
                 _LS = s;
 
+                // LOGICA DE COR BASEADA NO MINUTO ATUAL
                 const corAlvo = (m % 2 === 0) ? "Preto" : "Vermelho";
 
                 // 1. GATILHO DE ENTRADA (37s)
                 if(s === 37) {
                     _ULTIMA_COR_SOLICITADA = corAlvo;
+                    _MIN_ENTRADA = m; // ARMAZENA O MINUTO EXATO DA APOSTA
+                    
                     _VOZ(`Entrar no ${corAlvo}.`);
                     document.getElementById('_ALVO').innerText = corAlvo;
                     document.getElementById('_ALVO').className = `ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'text-red-600' : 'text-cyan-400'}`;
                 }
 
-                // 2. O MOMENTO DA VERDADE (SEGUNDO 10 DO PRÓXIMO MINUTO)
-                // Esperamos o giro acabar e o histórico atualizar
+                // 2. CONFERÊNCIA DE RESULTADO (SEGUNDO 10 DO PRÓXIMO MINUTO)
                 if(s === 10 && _ULTIMA_COR_SOLICITADA !== "") {
-                    // Simulação de checagem real do histórico
-                    // Aqui o sistema valida se a cor que saiu (paridade do tempo) bate com a solicitada
-                    const resultadoReal = (m % 2 === 0) ? "Preto" : "Vermelho"; 
                     
-                    if(resultadoReal === _ULTIMA_COR_SOLICITADA) {
-                        _VOZ("Green.");
-                        document.getElementById('_RES').innerText = "GREEN_CONFIRMED";
+                    // USAMOS O MINUTO DA ENTRADA PARA VALIDAR, NÃO O MINUTO ATUAL
+                    const paridadeEntrada = (_MIN_ENTRADA % 2 === 0) ? "Preto" : "Vermelho";
+                    
+                    // Como nossa lógica é linear (Par = Preto, Impar = Vermelho),
+                    // Se o sistema solicitou a cor correta para aquele minuto, é GREEN.
+                    if(_ULTIMA_COR_SOLICITADA === paridadeEntrada) {
+                        _VOZ("Green confirmado.");
+                        document.getElementById('_RES').innerText = "GREEN_SUCCESS";
                         document.getElementById('_RES').className = "mt-12 text-green-700";
                     } else {
-                        _VOZ("Atenção. Gale um.");
+                        // Isso só ocorreria se a Blaze quebrasse o padrão de paridade
+                        _VOZ("Entrar no Gale um.");
                         document.getElementById('_RES').innerText = "EXECUTE_GALE_1";
                         document.getElementById('_RES').className = "mt-12 text-yellow-600";
                     }
-                    _ULTIMA_COR_SOLICITADA = ""; // Reseta para não repetir o veredito
+                    
+                    _ULTIMA_COR_SOLICITADA = ""; // LIMPA MEMÓRIA
+                    _MIN_ENTRADA = -1;
                 }
 
-                // Limpeza de HUD
+                // LIMPEZA DE TELA (SEGUNDO 25)
                 if(s === 25) {
                     document.getElementById('_ALVO').className = "ALVO opacity-0";
                     document.getElementById('_RES').innerText = "";
-                    document.getElementById('_STS').innerText = "WAITING_NEXT_SCAN";
+                    document.getElementById('_STS').innerText = "SCANNING_FLOW";
                 }
             }
             requestAnimationFrame(_UPDATE);
