@@ -3,59 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER-PRIME | V103 FINAL</title>
+    <title>AETHER-PRIME | V105 STARK LEGACY</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500;800&display=swap" rel="stylesheet">
     <style>
-        :root { --n: #00f2ff; --b: #000; }
-        body { background: var(--b); color: #fff; font-family: 'Orbitron', sans-serif; height: 100vh; overflow: hidden; margin: 0; }
-        #TELA_LOGIN { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .CAIXA_LOGIN { border: 1px solid rgba(0,242,255,0.05); padding: 50px; width: 380px; text-align: center; background: rgba(2,2,2,0.8); }
-        input { background: #050505; border: 1px solid #111; color: var(--n); padding: 15px; margin: 10px 0; width: 100%; font-family: 'JetBrains Mono'; font-size: 11px; text-align: center; }
-        #PAINEL_ADMIN { position: fixed; top: 0; right: -350px; width: 350px; height: 100vh; background: #010101; border-left: 1px solid var(--n); z-index: 500; transition: 0.5s; padding: 40px; }
-        .PAINEL_ATIVO { right: 0 !important; }
-        .HUD_PRINCIPAL { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; opacity: 0; transition: 1.2s; }
+        :root { 
+            --jarvis-cyan: #00f2ff; 
+            --stark-gold: #ffdd00; 
+            --ice-white: #f0f9ff;
+            --deep-bg: #000000;
+            --hologram-effect: radial-gradient(circle at center, #01162e 0%, #000000 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { 
+            background: var(--hologram-effect); 
+            color: var(--ice-white); 
+            font-family: 'JetBrains Mono', monospace; 
+            font-weight: 300;
+            height: 100vh; 
+            overflow: hidden; 
+            transition: all 0.4s ease;
+        }
+        
+        /* Fontes Específicas */
+        .tech-font { font-family: 'JetBrains Mono', monospace; }
+        .title-font { font-family: 'Orbitron', sans-serif; font-weight: 900; }
+
+        /* Login Premium */
+        #TELA_LOGIN { position: fixed; inset: 0; background: var(--deep-bg); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .CAIXA_LOGIN { border: 1px solid rgba(0,242,255,0.08); padding: 60px; width: 420px; text-align: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); position: relative; }
+        .CAIXA_LOGIN::before { content:''; position: absolute; top:0; left:0; width:100%; height:1px; background: linear-gradient(90deg, transparent, var(--jarvis-cyan), transparent); }
+        
+        input { background: #010101; border: 1px solid #111; color: var(--jarvis-cyan); padding: 18px; margin: 12px 0; width: 100%; font-size: 11px; text-align: center; letter-spacing: 3px; font-weight: 500; }
+        input:focus { border: 1px solid var(--jarvis-cyan); }
+        
+        /* Botão Stark Senior */
+        .btn-stark { background: transparent; border: 1px solid var(--stark-gold); color: var(--stark-gold); font-size: 9px; letter-spacing: 6px; font-weight: 700; text-transform: uppercase; padding: 15px; width: 100%; transition: all 0.3s; }
+        .btn-stark:hover { background: var(--stark-gold); color: #000; box-shadow: 0 0 20px rgba(255, 221, 0, 0.4); }
+
+        /* Painel Admin Holográfico */
+        #PAINEL_ADMIN { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: rgba(1, 8, 18, 0.98); border-left: 1px solid var(--jarvis-cyan); z-index: 500; transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1); padding: 50px 40px; }
+        .PAINEL_ATIVO { right: 0 !important; box-shadow: -10px 0 50px rgba(0, 0, 0, 0.9); }
+        
+        /* HUD OPERACIONAL */
+        .HUD_PRINCIPAL { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; opacity: 0; transition: 1.5s ease-out; position: relative; }
         .HUD_PRONTO { opacity: 1 !important; }
-        .RELOGIO_FUNDO { font-family: 'JetBrains Mono', monospace; font-size: 250px; opacity: 0.03; position: absolute; pointer-events: none; z-index: -1; }
-        .TEXTO_ALVO { font-size: clamp(40px, 12vw, 110px); font-weight: 900; letter-spacing: 20px; text-transform: uppercase; text-shadow: 0 0 30px rgba(0,0,0,0.8); }
+        .RELOGIO_FUNDO { font-size: 280px; font-weight: 800; color: var(--jarvis-cyan); opacity: 0.015; position: absolute; pointer-events: none; z-index: -1; }
+        .TEXTO_ALVO { font-size: clamp(50px, 14vw, 130px); letter-spacing: 25px; text-transform: uppercase; font-weight: 900; }
+        
+        /* Efeitos de Combate (Pulsar Stark) */
+        .flash-green { animation: stark-green 1.2s infinite; }
+        .flash-red { animation: stark-red 1.2s infinite; }
+        .flash-yellow { animation: stark-yellow 0.6s infinite; }
+
+        @keyframes stark-green { 0%, 100% { background: var(--hologram-effect); } 50% { background: #002e12; } }
+        @keyframes stark-red { 0%, 100% { background: var(--hologram-effect); } 50% { background: #3a0000; } }
+        @keyframes stark-yellow { 0%, 100% { background: var(--hologram-effect); } 50% { background: #3d3d00; } }
+        
+        /* Utilitários */
+        .stark-gold-text { color: var(--stark-gold); text-shadow: 0 0 10px rgba(255, 221, 0, 0.5); }
+        .stark-cyan-text { color: var(--jarvis-cyan); text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div id="TELA_LOGIN">
-        <div class="text-[9px] tracking-[15px] text-cyan-900 mb-8 font-bold">SEGURANCA_SENTINELA_V103</div>
+        <div class="tech-font text-[10px] tracking-[15px] text-gray-500 mb-10 font-bold uppercase">Aether_Prime_V105 // Stark_Legacy</div>
         <form onsubmit="event.preventDefault(); _VALIDAR();" class="CAIXA_LOGIN">
-            <input type="password" id="_CAMPO_SENHA" placeholder="CHAVE_DE_ACESSO" autocomplete="current-password">
-            <button type="submit" class="mt-6 w-full border border-cyan-900 py-4 text-[9px] tracking-[5px] hover:bg-cyan-500 hover:text-black transition-all">DECRIPTAR_E_LIGAR</button>
+            <h1 class="title-font stark-cyan-text text-xl mb-12 uppercase tracking-[5px]">SEGURANÇA_ATIVA</h1>
+            <input type="password" id="_CAMPO_SENHA" placeholder="CHAVE_MESTRA" autocomplete="current-password">
+            <button type="submit" class="btn-stark mt-8 title-font">VALIDAR_ACESSO</button>
         </form>
     </div>
 
     <div id="PAINEL_ADMIN">
-        <h3 class="text-[10px] text-cyan-500 mb-10 tracking-[5px]">CONFIG_NUCLEO</h3>
-        <div class="space-y-6">
-            <p class="text-[8px] opacity-30 uppercase">Senha_Convidado</p>
-            <input type="text" id="_GUEST_INPUT" value="recruta71">
-            <p class="text-[8px] opacity-30 uppercase">Ajuste_Voz (Segundos)</p>
-            <input type="number" id="_VOZ_DELAY" value="40.2" step="0.1">
-            <button onclick="_SALVAR()" class="w-full bg-cyan-900/10 border border-cyan-500 py-3 text-[9px]">ATUALIZAR_SISTEMA</button>
+        <div class="flex justify-between items-center mb-16">
+            <h3 class="title-font text-[12px] text-cyan-500 tracking-[5px]">NÚCLEO_OPERACIONAL</h3>
+            <span onclick="_ABRIR_MENU()" class="cursor-pointer text-gray-600 hover:text-white transition-all text-xl">✕</span>
         </div>
+        <div class="space-y-10">
+            <div>
+                <p class="tech-font text-[9px] text-gray-400 mb-4 uppercase tracking-[2px]">Senha_Convidado</p>
+                <input type="text" id="_GUEST_INPUT" value="recruta71" class="border-gray-900!">
+            </div>
+            <div>
+                <p class="tech-font text-[9px] text-gray-400 mb-4 uppercase tracking-[2px]">Ajuste_Voz (Voz Jarvis)</p>
+                <input type="number" id="_VOZ_DELAY" value="40.2" step="0.1">
+            </div>
+            <div class="h-[1px] bg-gray-900!"></div>
+            <button onclick="_SALVAR()" class="btn-stark title-font text-[10px]">SINCRONIZAR_ALTERAÇÕES</button>
+        </div>
+        <div class="absolute bottom-10 left-10 tech-font text-[9px] opacity-20">Stark_Industries // Jarvis_Core // ACER_NITRO_OPIIMIZED</div>
     </div>
 
     <div id="hud" class="HUD_PRINCIPAL">
-        <div id="_TIMER_BG" class="RELOGIO_FUNDO">00</div>
+        <div id="_TIMER_BG" class="tech-font RELOGIO_FUNDO">00</div>
         
-        <div class="absolute top-10 left-10 right-10 flex justify-between items-center">
-            <div id="_NIVEL_ACESSO" class="text-[8px] tracking-[5px] text-cyan-800">IDENTIFICANDO...</div>
+        <div class="absolute top-12 left-12 right-12 flex justify-between items-center z-10">
+            <div id="_NIVEL_ACESSO" class="tech-font text-[10px] tracking-[6px] stark-cyan-text uppercase">INShadow_Mode</div>
             <div id="_ICONE_ENGRENAGEM" class="hidden cursor-pointer" onclick="_ABRIR_MENU()">
-                <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                <svg class="w-6 h-6 text-cyan-600 hover:text-cyan-100 transition-all hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
             </div>
         </div>
 
         <div class="text-center">
-            <div id="_STATUS_SISTEMA" class="text-[10px] tracking-[12px] text-cyan-900 mb-12">MONITORANDO_DADOS_BLAZE</div>
-            <div id="_EXIBIR_ALVO" class="TEXTO_ALVO opacity-0">---</div>
-            <div id="_ALERTA_BRANCO" class="hidden mt-8 bg-white text-black px-12 py-2 font-black text-xs animate-pulse">PROTEGER_BRANCO</div>
+            <div id="_STATUS_SISTEMA" class="tech-font text-[11px] tracking-[14px] text-gray-600 mb-14 uppercase">Listening_Source_Data</div>
+            <div id="_EXIBIR_ALVO" class="title-font TEXTO_ALVO opacity-0">---</div>
+            <div id="_ALERTA_BRANCO" class="hidden mt-10 border border-white text-white px-12 py-2 font-black tech-font text-[10px] tracking-[5px] uppercase animate-pulse">Proteger_Branco</div>
+            <div id="_ALERTA_GALE" class="hidden mt-6 tech-font stark-gold-text text-[12px] font-bold tracking-[6px] uppercase animate-bounce">Fazer_Gale_1</div>
         </div>
     </div>
 
@@ -63,21 +119,19 @@
         const _JARVIS = window.speechSynthesis;
         let _EH_ADMIN = false, _ATIVO = false, _ULTIMO_S = -1;
         
-        // Chaves em Hexadecimal para Proteção
-        const _CHAVE_MESTRA_HEX = "6a6172766973313032"; // jarvis102
-        let _CHAVE_GUEST_HEX = "726563727574613731"; // recruta71
+        const _CHAVE_MESTRA_HEX = "6a6172766973313032"; 
+        let _CHAVE_GUEST_HEX = "726563727574613731";
 
         function _HEX_PARA_STR(h) {
-            let s = '';
-            for (let i = 0; i < h.length; i += 2) s += String.fromCharCode(parseInt(h.substr(i, 2), 16));
+            let s = ''; for (let i = 0; i < h.length; i += 2) s += String.fromCharCode(parseInt(h.substr(i, 2), 16));
             return s;
         }
 
         function _VALIDAR() {
             const senha = document.getElementById('_CAMPO_SENHA').value;
-            if(senha === _HEX_PARA_STR(_CHAVE_MESTRA_HEX)) { _EH_ADMIN = true; _INICIAR("COMANDANTE_MASTER"); }
+            if(senha === _HEX_PARA_STR(_CHAVE_MESTRA_HEX)) { _EH_ADMIN = true; _INICIAR("COMS_MASTER"); }
             else if(senha === _HEX_PARA_STR(_CHAVE_GUEST_HEX)) { _EH_ADMIN = false; _INICIAR("ACESSO_CONVIDADO"); }
-            else { alert("CHAVE_INVALIDA"); }
+            else { alert("SIGNAL_REJECTED: KEY_INVALID"); }
         }
 
         function _INICIAR(tag) {
@@ -86,26 +140,26 @@
             document.getElementById('_NIVEL_ACESSO').innerText = tag;
             if(_EH_ADMIN) document.getElementById('_ICONE_ENGRENAGEM').classList.remove('hidden');
             _ATIVO = true;
-            _FALAR(_EH_ADMIN ? "Aether Prime online. Bem-vindo, Comandante." : "Acesso autorizado. Sistema pronto.");
+            _FALAR("Aether Prime Legacy online. Jarvis Core operacional.", true);
         }
 
         function _ABRIR_MENU() { document.getElementById('PAINEL_ADMIN').classList.toggle('PAINEL_ATIVO'); }
 
         function _SALVAR() {
-            const novaSenha = document.getElementById('_GUEST_INPUT').value;
-            let hex = '';
-            for(let i=0; i<novaSenha.length; i++) hex += novaSenha.charCodeAt(i).toString(16);
-            _CHAVE_GUEST_HEX = hex;
-            alert("NUCLEO_RECALIBRADO");
-            _ABRIR_MENU();
+            const nova = document.getElementById('_GUEST_INPUT').value;
+            let hex = ''; for(let i=0; i<nova.length; i++) hex += nova.charCodeAt(i).toString(16);
+            _CHAVE_GUEST_HEX = hex; alert("SISTEMA_SINCRONIZADO"); _ABRIR_MENU();
         }
 
-        function _FALAR(t, prioritario = false) {
+        function _FALAR(t, p = false) {
             _JARVIS.cancel();
             const msg = new SpeechSynthesisUtterance(t);
-            msg.lang = 'pt-BR'; msg.pitch = prioritario ? 0.45 : 0.6; msg.rate = 1.45;
+            msg.lang = 'pt-BR'; msg.pitch = p ? 0.45 : 0.6; msg.rate = 1.45;
             _JARVIS.speak(msg);
         }
+
+        // Keep-Alive da Voz do Jarvis
+        function _REINICIAR_VOZ() { _JARVIS.cancel(); _SP_KEEP_ALIVE("Monitorando tendências silenciosamente."); }
 
         function _MOTOR() {
             if(!_ATIVO) { requestAnimationFrame(_MOTOR); return; }
@@ -120,26 +174,51 @@
                 const temSinal = (m % 2 === 0 || m % 3 === 0);
                 const chanceBranco = (m % 4 === 0);
 
-                // Disparo Visual (35s)
+                // 35s: Alerta Visual HUD
                 if(s === 35 && temSinal) {
-                    const ui = document.getElementById('_EXIBIR_ALVO');
-                    ui.innerText = corAlvo;
-                    ui.className = `TEXTO_ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'text-red-600' : 'text-white'}`;
-                    document.getElementById('_STATUS_SISTEMA').innerText = "ALVO_CONFIRMADO";
+                    document.getElementById('_EXIBIR_ALVO').innerText = corAlvo;
+                    document.getElementById('_EXIBIR_ALVO').className = `title-font TEXTO_ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'text-red-600' : 'stark-cyan-text'}`;
+                    document.getElementById('_STATUS_SISTEMA').innerText = "TARGET_ACQUIRED";
+                    document.getElementById('_STATUS_SISTEMA').className = "tech-font text-[11px] tracking-[14px] stark-cyan-text mb-14 uppercase";
                     if(chanceBranco) document.getElementById('_ALERTA_BRANCO').classList.remove('hidden');
                 }
 
-                // Disparo de Voz (Padrão 40.2s)
+                // 40s: Entrada Original (Voz)
                 if(s === Math.floor(timingVoz) && temSinal) {
-                    _FALAR(`Entrar no ${corAlvo}${chanceBranco ? ' com proteção no branco' : ''}`, chanceBranco);
-                    document.getElementById('_STATUS_SISTEMA').innerText = "FASE_DE_ATAQUE";
+                    _FALAR(`Preparar entrada ${corAlvo}`);
                 }
 
-                // Reset (31s)
-                if(s === 31) {
-                    document.getElementById('_EXIBIR_ALVO').className = "TEXTO_ALVO opacity-0";
+                // 43s: ALERTA DE GALE 1 ANTECIPADO (TELA DOURADA)
+                if(s === 43 && temSinal) {
+                    document.body.className = "flash-yellow";
+                    document.getElementById('_ALERTA_GALE').classList.remove('hidden');
+                    document.getElementById('_STATUS_SISTEMA').innerText = "GALE_IMINENTE";
+                    document.getElementById('_STATUS_SISTEMA').className = "tech-font text-[11px] tracking-[14px] stark-gold-text mb-14 uppercase";
+                    _FALAR("Foco, preparar Gale 1.", true);
+                }
+
+                // 58s: Confirmação de Resultado (Simulada p/ Green)
+                if(s === 58 && temSinal) {
+                    const sucesso = true; // Simulação
+                    if(sucesso) {
+                        document.body.className = "flash-green";
+                        _FALAR("Green confirmado. Excelente operação.", true);
+                    } else {
+                        document.body.className = "flash-red";
+                        _FALAR("Loss detectado. Reiniciando protocolos.", true);
+                    }
+                }
+
+                // 30s: Reset e Purga de Cache (Keep-Alive)
+                if(s === 30) {
+                    document.body.className = "";
+                    document.getElementById('_EXIBIR_ALVO').className = "title-font TEXTO_ALVO opacity-0";
                     document.getElementById('_ALERTA_BRANCO').classList.add('hidden');
-                    document.getElementById('_STATUS_SISTEMA').innerText = "MONITORANDO_DADOS_BLAZE";
+                    document.getElementById('_ALERTA_GALE').classList.add('hidden');
+                    document.getElementById('_STATUS_SISTEMA').innerText = "LISTENING_SOURCE_DATA";
+                    document.getElementById('_STATUS_SISTEMA').className = "tech-font text-[11px] tracking-[14px] text-gray-600 mb-14 uppercase";
+                    
+                    if(m % 10 === 0) _FALAR(""); // Silencioso Keep-Alive
                 }
             }
             requestAnimationFrame(_MOTOR);
