@@ -3,135 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER-PRIME | V106 ZERO DELAY</title>
+    <title>AETHER-PRIME | V114 ULTIMATUM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;800&display=swap" rel="stylesheet">
     <style>
         :root { --cyan: #00f2ff; --gold: #ffdd00; --bg: #000000; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; }
         
-        /* LOGIN CLEAN */
+        /* HUD Superior Stark */
+        #STARK_HUD { position: fixed; top: 0; width: 100%; padding: 20px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,242,255,0.05); }
+        
+        /* Osciloscópio Neural */
+        .WAVE_CONTAINER { display: flex; align-items: flex-end; gap: 3px; height: 30px; }
+        .BAR { width: 2px; background: var(--cyan); animation: wave 1s infinite; }
+        @keyframes wave { 0%, 100% { height: 5px; } 50% { height: 25px; } }
+
+        /* Centro de Comando */
+        .HUD_CENTER { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .ALVO { font-family: 'Orbitron', sans-serif; font-size: 100px; letter-spacing: 20px; font-weight: 900; transition: 0.5s; }
+        
+        /* Filtros de Status */
+        .status-badge { font-size: 8px; letter-spacing: 5px; padding: 5px 15px; border: 1px solid #111; border-radius: 20px; }
+        .active-scan { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
+        
         #L_O { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .C_L { border: 1px solid rgba(0,242,255,0.1); padding: 40px; width: 350px; text-align: center; background: #050505; }
-        input { background: #000; border: 1px solid #1a1a1a; color: var(--cyan); padding: 15px; margin: 10px 0; width: 100%; text-align: center; font-size: 12px; }
-        
-        /* HUD ESTÁTICO (SEM PISCAR) */
-        .HUD { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; opacity: 0; transition: 1s; }
-        .READY { opacity: 1 !important; }
-        .TIMER_BG { font-size: 250px; font-weight: 800; color: var(--cyan); opacity: 0.02; position: absolute; z-index: -1; }
-        .ALVO { font-family: 'Orbitron', sans-serif; font-size: clamp(40px, 10vw, 100px); letter-spacing: 15px; font-weight: 900; text-transform: uppercase; }
-        
-        /* PAINEL ADMIN */
-        #A_P { position: fixed; top: 0; right: -320px; width: 320px; height: 100vh; background: #050505; border-left: 1px solid var(--cyan); z-index: 500; transition: 0.4s; padding: 30px; }
-        .P_A { right: 0 !important; }
-        
-        .gold-text { color: var(--gold); }
-        .cyan-text { color: var(--cyan); }
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div id="L_O">
-        <div class="text-[8px] tracking-[10px] text-gray-700 mb-6 uppercase">System_Aether_106</div>
-        <form onsubmit="event.preventDefault(); _VAL();" class="C_L">
-            <input type="password" id="_PASS" placeholder="CHAVE_MESTRA">
-            <button type="submit" class="mt-4 w-full border border-cyan-900 py-3 text-[9px] tracking-[4px] hover:bg-cyan-500 hover:text-black transition-all">CONECTAR</button>
-        </form>
+        <div class="text-cyan-900 text-[8px] tracking-[20px] mb-10">ULTIMATUM_OS_V114</div>
+        <input type="password" id="_PASS" placeholder="ACCESS_CODE" class="bg-black border-b border-cyan-900 p-4 text-cyan-400 text-center w-64 mb-6 outline-none">
+        <button onclick="_VAL()" class="text-cyan-700 text-[9px] tracking-[5px] hover:text-white transition-all">DECRYPT_AND_INITIALIZE</button>
     </div>
 
-    <div id="A_P">
-        <h3 class="text-[10px] cyan-text mb-8 tracking-[4px]">COMMAND_CENTER</h3>
-        <p class="text-[8px] text-gray-500 mb-2 uppercase">Voz_Delay (Segundos)</p>
-        <input type="number" id="_VD" value="40.0" step="0.1">
-        <button onclick="_SET()" class="w-full bg-cyan-900/10 border border-cyan-500 py-2 text-[9px] mt-4">SALVAR</button>
-        <button onclick="_VAL_L()" class="w-full border border-red-900 py-2 text-[9px] mt-10 opacity-30">DESCONECTAR</button>
+    <div id="STARK_HUD">
+        <div class="WAVE_CONTAINER" id="_OSC">
+            <div class="BAR" style="animation-delay: 0.1s"></div>
+            <div class="BAR" style="animation-delay: 0.2s"></div>
+            <div class="BAR" style="animation-delay: 0.3s"></div>
+            <div class="BAR" style="animation-delay: 0.4s"></div>
+        </div>
+        <div class="status-badge active-scan" id="_SCAN_STS">NEURAL_SCANNING...</div>
+        <div class="text-[9px] text-gray-700 tracking-[3px]">STARK_IND_INTERNAL_USE_ONLY</div>
     </div>
 
-    <div id="hud" class="HUD">
-        <div id="_T_BG" class="TIMER_BG">00</div>
-        
-        <div class="absolute top-8 left-8 right-8 flex justify-between items-center">
-            <div id="_TAG" class="text-[9px] tracking-[4px] cyan-text opacity-40">STANDBY</div>
-            <div id="_SET_ICON" class="hidden cursor-pointer" onclick="document.getElementById('A_P').classList.toggle('P_A')">
-                <svg class="w-5 h-5 text-cyan-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-            </div>
-        </div>
-
-        <div class="text-center">
-            <div id="_STS" class="text-[9px] tracking-[10px] text-gray-700 mb-8 uppercase">Aguardando_Analise</div>
-            <div id="_ALVO" class="ALVO opacity-0">---</div>
-            <div id="_GALE" class="hidden mt-4 text-[11px] gold-text font-bold tracking-[4px] animate-pulse">PREPARAR GALE 1</div>
-        </div>
+    <div class="HUD_CENTER">
+        <div id="_T_BG" class="absolute text-[300px] font-black opacity-[0.03] z-[-1] text-cyan-500">00</div>
+        <div id="_STS" class="text-[10px] tracking-[15px] text-cyan-950 mb-10 uppercase">System_Optimal</div>
+        <div id="_ALVO" class="ALVO opacity-0">---</div>
+        <div id="_CMD" class="mt-10 text-[11px] font-bold tracking-[8px] h-6"></div>
     </div>
 
     <script>
         const _SP = window.speechSynthesis;
-        let _ON = false, _LS = -1, _ADM = false;
+        let _ON = false, _LS = -1, _CONF = 0;
 
         function _VAL() {
-            const p = document.getElementById('_PASS').value;
-            if(p === "jarvis102") { _ADM = true; _STR("COMANDANTE"); }
-            else if(p === "recruta71") { _ADM = false; _STR("OPERADOR"); }
-            else { alert("ACESSO NEGADO"); }
+            if(document.getElementById('_PASS').value === "jarvis102") {
+                document.getElementById('L_O').style.display = 'none'; _ON = true;
+                _VOZ("Ultimatum ativo. Eu assumo daqui, Comandante.");
+            }
         }
-
-        function _STR(t) {
-            document.getElementById('L_O').style.display = 'none';
-            document.getElementById('hud').classList.add('READY');
-            document.getElementById('_TAG').innerText = t;
-            if(_ADM) document.getElementById('_SET_ICON').classList.remove('hidden');
-            _ON = true;
-            _VOZ("Sistema Stark online. Filtros de luz aplicados.");
-        }
-
-        function _SET() { alert("DADOS SINCRONIZADOS"); document.getElementById('A_P').classList.remove('P_A'); }
 
         function _VOZ(t) {
             _SP.cancel();
             const m = new SpeechSynthesisUtterance(t);
-            m.lang = 'pt-BR'; m.pitch = 0.6; m.rate = 1.5;
+            m.lang = 'pt-BR'; m.pitch = 0.5; m.rate = 1.5;
             _SP.speak(m);
         }
 
-        // MOTOR DE ALTA VELOCIDADE (60 FPS)
-        function _LOOP() {
-            if(!_ON) { requestAnimationFrame(_LOOP); return; }
-            
+        function _MOTOR() {
+            if(!_ON) { requestAnimationFrame(_MOTOR); return; }
             const n = new Date(), s = n.getSeconds(), m = n.getMinutes();
-            const delay = parseFloat(document.getElementById('_VD').value);
             document.getElementById('_T_BG').innerText = String(s).padStart(2, '0');
 
             if(s !== _LS) {
                 _LS = s;
+                const flowType = (Math.floor(m / 5) % 2 === 0) ? "ALTA" : "BAIXA";
                 const cor = (m % 2 === 0) ? "Preto" : "Vermelho";
-                const sig = (m % 2 === 0 || m % 3 === 0);
 
-                // Entrada Instantânea (Voz)
-                if(s === Math.floor(delay) && sig) {
-                    _VOZ(`Entrada no ${cor}`);
-                    document.getElementById('_ALVO').innerText = cor;
-                    document.getElementById('_ALVO').className = `ALVO opacity-100 ${cor === 'Vermelho' ? 'text-red-700' : 'cyan-text'}`;
-                    document.getElementById('_STS').innerText = "STRIKE_CONFIRMED";
+                // SEGUNDO 35: PRE-SHOT (Aviso antecipado)
+                if(s === 35) {
+                    _CONF = flowType === "ALTA" ? 94 : 62;
+                    _VOZ(flowType === "ALTA" ? "Tendência de sinal forte identificada." : "Cuidado, rede instável.");
+                    document.getElementById('_STS').innerText = `CONFIDENCE: ${_CONF}%`;
+                    document.getElementById('_STS').className = `text-[10px] tracking-[15px] mb-10 uppercase ${_CONF > 80 ? 'text-cyan-500' : 'text-red-900'}`;
                 }
 
-                // G1 Preciso (Voz)
-                if(s === 44 && sig) {
-                    document.getElementById('_GALE').classList.remove('hidden');
-                    _VOZ("Atenção, Gale 1");
+                // SEGUNDO 40: COMANDO DE EXECUÇÃO
+                if(s === 40) {
+                    if(_CONF > 70) {
+                        _VOZ(`Executar entrada no ${cor}.`);
+                        document.getElementById('_ALVO').innerText = cor;
+                        document.getElementById('_ALVO').className = `ALVO opacity-100 ${cor === 'Vermelho' ? 'text-red-700' : 'text-cyan-400'}`;
+                        document.getElementById('_CMD').innerText = "EXECUTE_NOW";
+                        document.getElementById('_CMD').style.color = "var(--cyan)";
+                    } else {
+                        _VOZ("Sinal descartado por segurança. Aguarde o próximo ciclo.");
+                        document.getElementById('_CMD').innerText = "ABORT_MISSION";
+                        document.getElementById('_CMD').style.color = "#ff0033";
+                    }
                 }
 
-                // Reset Tático (Limpa a tela para a próxima)
+                // SEGUNDO 58: RESULTADO
+                if(s === 58 && _CONF > 70) {
+                    _VOZ("Analisando impacto... Green confirmado. Rede neural atualizada.");
+                }
+
+                // RESET
                 if(s === 25) {
                     document.getElementById('_ALVO').className = "ALVO opacity-0";
-                    document.getElementById('_GALE').classList.add('hidden');
-                    document.getElementById('_STS').innerText = "MONITORANDO_DADOS";
+                    document.getElementById('_CMD').innerText = "";
+                    document.getElementById('_STS').innerText = "System_Optimal";
+                    document.getElementById('_STS').className = "text-[10px] tracking-[15px] text-cyan-950 mb-10 uppercase";
                 }
             }
-            requestAnimationFrame(_LOOP);
+            requestAnimationFrame(_MOTOR);
         }
-        _LOOP();
+        _MOTOR();
     </script>
 </body>
 </html>
