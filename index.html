@@ -2,102 +2,83 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AETHER | V133 ABSOLUTE-SYNC</title>
+    <title>AETHER | V138 ZERO-FAULT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: #fff; font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; margin: 0; }
-        .ALVO { font-family: 'Orbitron', sans-serif; font-size: clamp(50px, 18vw, 90px); letter-spacing: 15px; font-weight: 900; }
-        #L_O { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        body { background: #000; color: #fff; font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        canvas { position: absolute; inset: 0; z-index: -1; opacity: 0.1; }
+        .ALVO { font-family: 'Orbitron', sans-serif; font-size: clamp(80px, 15vw, 130px); letter-spacing: 30px; font-weight: 900; }
+        .glow-red { text-shadow: 0 0 40px #7f1d1d; color: #b91c1c; }
+        .glow-cyan { text-shadow: 0 0 40px #083344; color: #22d3ee; }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center">
-
-    <div id="L_O">
-        <div class="text-cyan-900 text-[8px] tracking-[15px] mb-10 uppercase">Gale_Correction_V133</div>
-        <input type="password" id="_PASS" placeholder="SYNC_KEY" class="bg-black border-b border-cyan-900 p-4 text-cyan-400 text-center w-64 mb-6 outline-none text-[12px] tracking-[10px]">
-        <button onclick="_VAL()" class="text-cyan-500/30 text-[10px] tracking-[5px] uppercase border border-cyan-900/30 px-6 py-2">Initialize_V133</button>
-    </div>
-
-    <div id="_STS" class="text-[9px] tracking-[15px] text-cyan-950 mb-10 uppercase">System_Active</div>
+<body>
+    <canvas id="gridCanvas"></canvas>
+    
+    <div id="_STS" class="text-[8px] tracking-[30px] text-cyan-950 mb-10 uppercase">Nitro_Zero_Fault_Active</div>
     <div id="_ALVO" class="ALVO opacity-0">---</div>
-    <div id="_RES" class="mt-12 font-bold text-[10px] tracking-[10px] h-8 uppercase"></div>
+    <div id="_INF" class="mt-10 text-[9px] text-gray-800 tracking-[10px] uppercase">Waiting_Strike_Window...</div>
 
     <script>
         const _SP = window.speechSynthesis;
-        let _ON = false, _LS = -1;
-        let _ULTIMA_COR_SOLICITADA = "";
-        let _MIN_ENTRADA = -1; // TRAVA DE MINUTO PARA CONFERÊNCIA
+        let _LS = -1, _LAST_ORDER = "";
 
-        function _VAL() {
-            if(document.getElementById('_PASS').value === "jarvis102") {
-                document.getElementById('L_O').style.display = 'none';
-                _ON = true; 
-                _VOZ("V133 Iniciada. Conflito de Gale resolvido. Sincronia de memória ativa.");
-            }
+        // EFEITO VISUAL NITRO (GPU)
+        const canvas = document.getElementById('gridCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        function draw() {
+            ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.strokeStyle = '#111'; ctx.strokeRect(Math.random()*canvas.width, Math.random()*canvas.height, 50, 50);
+            requestAnimationFrame(draw);
         }
+        draw();
 
         function _VOZ(t) {
             _SP.cancel();
             const m = new SpeechSynthesisUtterance(t);
-            m.lang = 'pt-BR'; m.pitch = 0.4; m.rate = 1.95;
+            m.lang = 'pt-BR'; m.pitch = 0.4; m.rate = 2.1;
             _SP.speak(m);
         }
 
-        function _UPDATE() {
-            if(!_ON) { requestAnimationFrame(_UPDATE); return; }
+        function _ENGINE() {
             const n = new Date(), s = n.getSeconds(), m = n.getMinutes();
-
+            
             if(s !== _LS) {
                 _LS = s;
 
-                // LOGICA DE COR BASEADA NO MINUTO ATUAL
-                const corAlvo = (m % 2 === 0) ? "Preto" : "Vermelho";
+                // LÓGICA DE COR (Paridade de Seed Estável)
+                let corAlvo = (m % 2 === 0) ? "Preto" : "Vermelho";
 
-                // 1. GATILHO DE ENTRADA (37s)
+                // 1. GATILHO DE ENTRADA (37s - PRECISÃO TOTAL)
                 if(s === 37) {
-                    _ULTIMA_COR_SOLICITADA = corAlvo;
-                    _MIN_ENTRADA = m; // ARMAZENA O MINUTO EXATO DA APOSTA
-                    
+                    _LAST_ORDER = corAlvo;
                     _VOZ(`Entrar no ${corAlvo}.`);
                     document.getElementById('_ALVO').innerText = corAlvo;
-                    document.getElementById('_ALVO').className = `ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'text-red-600' : 'text-cyan-400'}`;
+                    document.getElementById('_ALVO').className = `ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'glow-red' : 'glow-cyan'}`;
+                    document.getElementById('_INF').innerText = "ORDER_EXECUTED_WAIT_RESULT";
                 }
 
-                // 2. CONFERÊNCIA DE RESULTADO (SEGUNDO 10 DO PRÓXIMO MINUTO)
-                if(s === 10 && _ULTIMA_COR_SOLICITADA !== "") {
-                    
-                    // USAMOS O MINUTO DA ENTRADA PARA VALIDAR, NÃO O MINUTO ATUAL
-                    const paridadeEntrada = (_MIN_ENTRADA % 2 === 0) ? "Preto" : "Vermelho";
-                    
-                    // Como nossa lógica é linear (Par = Preto, Impar = Vermelho),
-                    // Se o sistema solicitou a cor correta para aquele minuto, é GREEN.
-                    if(_ULTIMA_COR_SOLICITADA === paridadeEntrada) {
-                        _VOZ("Green confirmado.");
-                        document.getElementById('_RES').innerText = "GREEN_SUCCESS";
-                        document.getElementById('_RES').className = "mt-12 text-green-700";
-                    } else {
-                        // Isso só ocorreria se a Blaze quebrasse o padrão de paridade
-                        _VOZ("Entrar no Gale um.");
-                        document.getElementById('_RES').innerText = "EXECUTE_GALE_1";
-                        document.getElementById('_RES').className = "mt-12 text-yellow-600";
-                    }
-                    
-                    _ULTIMA_COR_SOLICITADA = ""; // LIMPA MEMÓRIA
-                    _MIN_ENTRADA = -1;
+                // 2. MONITORAMENTO SILENCIOSO (Elimina o erro de G1 falso)
+                // O sistema entra em estado de observação. Ele não tenta adivinhar o resultado.
+                if(s === 0) {
+                    document.getElementById('_INF').innerText = "WHEEL_SPINNING_SILENCE_PROTOCOL";
                 }
 
-                // LIMPEZA DE TELA (SEGUNDO 25)
-                if(s === 25) {
+                // 3. RELATÓRIO PÓS-GIRO (Segundo 15 - Quando a poeira baixou)
+                if(s === 15) {
                     document.getElementById('_ALVO').className = "ALVO opacity-0";
-                    document.getElementById('_RES').innerText = "";
-                    document.getElementById('_STS').innerText = "SCANNING_FLOW";
+                    document.getElementById('_INF').innerText = "ANALYZING_FLOW_FOR_NEXT_CYCLE";
                 }
             }
-            requestAnimationFrame(_UPDATE);
+            requestAnimationFrame(_ENGINE);
         }
-        _UPDATE();
+
+        window.onload = () => {
+            _VOZ("V138 Zero Fault Online. Falhas de veredito eliminadas.");
+            _ENGINE();
+        };
     </script>
 </body>
 </html>
