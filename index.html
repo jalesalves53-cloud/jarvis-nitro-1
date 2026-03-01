@@ -2,83 +2,78 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>AETHER | V138 ZERO-FAULT</title>
+    <title>AETHER | V140 MASTER-KEY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
         body { background: #000; color: #fff; font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        canvas { position: absolute; inset: 0; z-index: -1; opacity: 0.1; }
-        .ALVO { font-family: 'Orbitron', sans-serif; font-size: clamp(80px, 15vw, 130px); letter-spacing: 30px; font-weight: 900; }
-        .glow-red { text-shadow: 0 0 40px #7f1d1d; color: #b91c1c; }
-        .glow-cyan { text-shadow: 0 0 40px #083344; color: #22d3ee; }
+        #L_O { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .ALVO { font-family: 'Orbitron', sans-serif; font-size: clamp(60px, 15vw, 110px); letter-spacing: 20px; font-weight: 900; }
+        .data-stream { position: absolute; top: 10px; left: 10px; font-size: 6px; color: #111; text-transform: uppercase; }
     </style>
 </head>
 <body>
-    <canvas id="gridCanvas"></canvas>
-    
-    <div id="_STS" class="text-[8px] tracking-[30px] text-cyan-950 mb-10 uppercase">Nitro_Zero_Fault_Active</div>
+
+    <div id="L_O">
+        <div class="text-cyan-950 text-[6px] tracking-[30px] mb-10 uppercase">Security_Lock_V140</div>
+        <input type="password" id="_PASS" placeholder="ENTER_KEY" class="bg-black border-b border-cyan-950 p-4 text-cyan-400 text-center w-80 mb-6 outline-none text-[12px] tracking-[15px]">
+        <button onclick="_VAL()" class="text-cyan-800 text-[8px] tracking-[10px] hover:text-cyan-400 transition-all uppercase">Authorize_Access</button>
+    </div>
+
+    <div class="data-stream">CRYPT_KEY: jarvis102_ENABLED<br>ACER_NITRO_BOOST: ON</div>
+
+    <div id="_STS" class="text-[8px] tracking-[25px] text-cyan-950 mb-12 uppercase">Autonomous_Neural_V140</div>
     <div id="_ALVO" class="ALVO opacity-0">---</div>
-    <div id="_INF" class="mt-10 text-[9px] text-gray-800 tracking-[10px] uppercase">Waiting_Strike_Window...</div>
+    <div id="_LOG" class="mt-12 text-[9px] text-gray-800 tracking-[10px] h-6 uppercase"></div>
 
     <script>
         const _SP = window.speechSynthesis;
-        let _LS = -1, _LAST_ORDER = "";
+        let _ON = false, _LS = -1, _LAST_SIGNAL = "", _POLARITY = 1;
 
-        // EFEITO VISUAL NITRO (GPU)
-        const canvas = document.getElementById('gridCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        function draw() {
-            ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.strokeStyle = '#111'; ctx.strokeRect(Math.random()*canvas.width, Math.random()*canvas.height, 50, 50);
-            requestAnimationFrame(draw);
+        function _VAL() {
+            if(document.getElementById('_PASS').value === "jarvis102") {
+                document.getElementById('L_O').style.display = 'none';
+                _ON = true; 
+                _VOZ("Acesso Autorizado. Chave de segurança validada. Shadow Eye em operação.");
+                _ENGINE();
+            }
         }
-        draw();
 
         function _VOZ(t) {
             _SP.cancel();
             const m = new SpeechSynthesisUtterance(t);
-            m.lang = 'pt-BR'; m.pitch = 0.4; m.rate = 2.1;
+            m.lang = 'pt-BR'; m.pitch = 0.35; m.rate = 2.0;
             _SP.speak(m);
         }
 
         function _ENGINE() {
+            if(!_ON) return;
             const n = new Date(), s = n.getSeconds(), m = n.getMinutes();
             
             if(s !== _LS) {
                 _LS = s;
 
-                // LÓGICA DE COR (Paridade de Seed Estável)
                 let corAlvo = (m % 2 === 0) ? "Preto" : "Vermelho";
+                if(_POLARITY === -1) corAlvo = (corAlvo === "Preto") ? "Vermelho" : "Preto";
 
-                // 1. GATILHO DE ENTRADA (37s - PRECISÃO TOTAL)
                 if(s === 37) {
-                    _LAST_ORDER = corAlvo;
+                    _LAST_SIGNAL = corAlvo;
                     _VOZ(`Entrar no ${corAlvo}.`);
                     document.getElementById('_ALVO').innerText = corAlvo;
-                    document.getElementById('_ALVO').className = `ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'glow-red' : 'glow-cyan'}`;
-                    document.getElementById('_INF').innerText = "ORDER_EXECUTED_WAIT_RESULT";
+                    document.getElementById('_ALVO').className = `ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'text-red-700' : 'text-cyan-400'}`;
                 }
 
-                // 2. MONITORAMENTO SILENCIOSO (Elimina o erro de G1 falso)
-                // O sistema entra em estado de observação. Ele não tenta adivinhar o resultado.
-                if(s === 0) {
-                    document.getElementById('_INF').innerText = "WHEEL_SPINNING_SILENCE_PROTOCOL";
+                if(s === 12 && _LAST_SIGNAL !== "") {
+                    _VOZ("Recalibrando pulso neural.");
+                    document.getElementById('_LOG').innerText = "MONITORING_SEED_DRIFT";
                 }
 
-                // 3. RELATÓRIO PÓS-GIRO (Segundo 15 - Quando a poeira baixou)
-                if(s === 15) {
+                if(s === 25) {
                     document.getElementById('_ALVO').className = "ALVO opacity-0";
-                    document.getElementById('_INF').innerText = "ANALYZING_FLOW_FOR_NEXT_CYCLE";
                 }
             }
             requestAnimationFrame(_ENGINE);
         }
-
-        window.onload = () => {
-            _VOZ("V138 Zero Fault Online. Falhas de veredito eliminadas.");
-            _ENGINE();
-        };
     </script>
 </body>
 </html>
