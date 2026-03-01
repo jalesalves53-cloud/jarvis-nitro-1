@@ -3,73 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER-PRIME | V114 ULTIMATUM</title>
+    <title>AETHER-PRIME | V119 ULTIMATE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;800&display=swap" rel="stylesheet">
     <style>
-        :root { --cyan: #00f2ff; --gold: #ffdd00; --bg: #000000; }
+        :root { --cyan: #00f2ff; --red: #ff1e1e; --bg: #000000; }
         body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; }
         
-        /* HUD Superior Stark */
-        #STARK_HUD { position: fixed; top: 0; width: 100%; padding: 20px; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(0,242,255,0.05); }
+        /* Dashboard Stealth */
+        #STARK_SYS { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 1s; }
+        .ALVO { font-family: 'Orbitron', sans-serif; font-size: clamp(60px, 15vw, 120px); letter-spacing: 25px; font-weight: 900; text-transform: uppercase; filter: drop-shadow(0 0 20px rgba(0,242,255,0.2)); }
         
-        /* Osciloscópio Neural */
-        .WAVE_CONTAINER { display: flex; align-items: flex-end; gap: 3px; height: 30px; }
-        .BAR { width: 2px; background: var(--cyan); animation: wave 1s infinite; }
-        @keyframes wave { 0%, 100% { height: 5px; } 50% { height: 25px; } }
-
-        /* Centro de Comando */
-        .HUD_CENTER { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
-        .ALVO { font-family: 'Orbitron', sans-serif; font-size: 100px; letter-spacing: 20px; font-weight: 900; transition: 0.5s; }
-        
-        /* Filtros de Status */
-        .status-badge { font-size: 8px; letter-spacing: 5px; padding: 5px 15px; border: 1px solid #111; border-radius: 20px; }
-        .active-scan { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(0,242,255,0.2); }
+        /* Linha de Escaneamento Visual */
+        .SCANNER_LINE { position: absolute; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); animation: scan 4s linear infinite; z-index: 5; }
+        @keyframes scan { from { top: 0%; } to { top: 100%; } }
         
         #L_O { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .data-stream { font-size: 8px; color: #1a1a1a; position: absolute; bottom: 20px; width: 100%; text-align: center; letter-spacing: 2px; }
+        
+        .white-alert { animation: w-pulse 0.5s infinite; color: #fff !important; text-shadow: 0 0 30px #fff; }
+        @keyframes w-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
 
     <div id="L_O">
-        <div class="text-cyan-900 text-[8px] tracking-[20px] mb-10">ULTIMATUM_OS_V114</div>
-        <input type="password" id="_PASS" placeholder="ACCESS_CODE" class="bg-black border-b border-cyan-900 p-4 text-cyan-400 text-center w-64 mb-6 outline-none">
-        <button onclick="_VAL()" class="text-cyan-700 text-[9px] tracking-[5px] hover:text-white transition-all">DECRYPT_AND_INITIALIZE</button>
+        <div class="text-cyan-950 text-[6px] tracking-[25px] mb-12 animate-pulse uppercase">Auditing_System_Cores</div>
+        <input type="password" id="_PASS" placeholder="STARK_MASTER_KEY" class="bg-black border-b border-cyan-950 p-4 text-cyan-400 text-center w-80 mb-8 outline-none text-[10px] tracking-[10px]">
+        <button onclick="_VAL()" class="text-white/20 text-[8px] tracking-[10px] hover:text-cyan-400 transition-all uppercase">Mount_Ultimate_OS</button>
     </div>
 
-    <div id="STARK_HUD">
-        <div class="WAVE_CONTAINER" id="_OSC">
-            <div class="BAR" style="animation-delay: 0.1s"></div>
-            <div class="BAR" style="animation-delay: 0.2s"></div>
-            <div class="BAR" style="animation-delay: 0.3s"></div>
-            <div class="BAR" style="animation-delay: 0.4s"></div>
+    <div class="SCANNER_LINE"></div>
+
+    <div id="STARK_SYS" class="opacity-0">
+        <div id="_T_BG" class="absolute text-[400px] font-black opacity-[0.01] z-[-1] text-white">00</div>
+        
+        <div class="text-center">
+            <div id="_STS" class="text-[9px] tracking-[20px] text-cyan-950 mb-16 uppercase">Efficiency_Optimized_V119</div>
+            <div id="_ALVO" class="ALVO opacity-0">---</div>
+            <div id="_RANGE" class="mt-4 text-[10px] text-gray-800 tracking-[5px]">SCANNING_NUMERIC_GROUPS...</div>
+            <div id="_RES" class="mt-16 font-bold text-xs uppercase h-10 tracking-[12px]"></div>
         </div>
-        <div class="status-badge active-scan" id="_SCAN_STS">NEURAL_SCANNING...</div>
-        <div class="text-[9px] text-gray-700 tracking-[3px]">STARK_IND_INTERNAL_USE_ONLY</div>
-    </div>
 
-    <div class="HUD_CENTER">
-        <div id="_T_BG" class="absolute text-[300px] font-black opacity-[0.03] z-[-1] text-cyan-500">00</div>
-        <div id="_STS" class="text-[10px] tracking-[15px] text-cyan-950 mb-10 uppercase">System_Optimal</div>
-        <div id="_ALVO" class="ALVO opacity-0">---</div>
-        <div id="_CMD" class="mt-10 text-[11px] font-bold tracking-[8px] h-6"></div>
+        <div class="data-stream">
+            KERNEL_STABLE // NO_LATENCY // GHOST_PROTOCOL_ENABLED // BLAZE_NUMERIC_SYNC // DIAMOND_RADAR_ACTIVE
+        </div>
     </div>
 
     <script>
         const _SP = window.speechSynthesis;
-        let _ON = false, _LS = -1, _CONF = 0;
+        let _ON = false, _LS = -1;
 
         function _VAL() {
             if(document.getElementById('_PASS').value === "jarvis102") {
-                document.getElementById('L_O').style.display = 'none'; _ON = true;
-                _VOZ("Ultimatum ativo. Eu assumo daqui, Comandante.");
+                document.getElementById('L_O').style.display = 'none';
+                document.getElementById('STARK_SYS').classList.remove('opacity-0');
+                _ON = true; 
+                _VOZ("Sistema Ultimatum online. Eficiência auditada. Boa sorte, Comandante.");
             }
         }
 
         function _VOZ(t) {
             _SP.cancel();
             const m = new SpeechSynthesisUtterance(t);
-            m.lang = 'pt-BR'; m.pitch = 0.5; m.rate = 1.5;
+            m.lang = 'pt-BR'; m.pitch = 0.55; m.rate = 1.6;
             _SP.speak(m);
         }
 
@@ -80,43 +77,59 @@
 
             if(s !== _LS) {
                 _LS = s;
-                const flowType = (Math.floor(m / 5) % 2 === 0) ? "ALTA" : "BAIXA";
-                const cor = (m % 2 === 0) ? "Preto" : "Vermelho";
+                
+                // LÓGICA HÍBRIDA: TIPMINER + BLAZE NUMERICS
+                const isWhiteTime = (m % 4 === 0 || m % 7 === 0 || m % 9 === 0);
+                const isDoubleWhite = (m % 13 === 0);
+                const isBlack = (m % 2 === 0);
+                const targetColor = isBlack ? "Preto" : "Vermelho";
+                const targetRange = isBlack ? "Casas 8 a 14" : "Casas 1 a 7";
 
-                // SEGUNDO 35: PRE-SHOT (Aviso antecipado)
-                if(s === 35) {
-                    _CONF = flowType === "ALTA" ? 94 : 62;
-                    _VOZ(flowType === "ALTA" ? "Tendência de sinal forte identificada." : "Cuidado, rede instável.");
-                    document.getElementById('_STS').innerText = `CONFIDENCE: ${_CONF}%`;
-                    document.getElementById('_STS').className = `text-[10px] tracking-[15px] mb-10 uppercase ${_CONF > 80 ? 'text-cyan-500' : 'text-red-900'}`;
-                }
-
-                // SEGUNDO 40: COMANDO DE EXECUÇÃO
-                if(s === 40) {
-                    if(_CONF > 70) {
-                        _VOZ(`Executar entrada no ${cor}.`);
-                        document.getElementById('_ALVO').innerText = cor;
-                        document.getElementById('_ALVO').className = `ALVO opacity-100 ${cor === 'Vermelho' ? 'text-red-700' : 'text-cyan-400'}`;
-                        document.getElementById('_CMD').innerText = "EXECUTE_NOW";
-                        document.getElementById('_CMD').style.color = "var(--cyan)";
-                    } else {
-                        _VOZ("Sinal descartado por segurança. Aguarde o próximo ciclo.");
-                        document.getElementById('_CMD').innerText = "ABORT_MISSION";
-                        document.getElementById('_CMD').style.color = "#ff0033";
+                // 1. RADAR DIAMOND (Segundo 34) - Eficiência Máxima
+                if(s === 34) {
+                    if(isDoubleWhite) {
+                        _VOZ("Alerta Diamond! Probabilidade de Branco Duplo detectada. Prepare cobertura máxima.");
+                        document.getElementById('_RES').innerText = "DOUBLE_WHITE_ALERT";
+                        document.getElementById('_RES').className = "mt-16 text-white white-alert";
+                    } else if(isWhiteTime) {
+                        _VOZ("Janela de branco identificada. Proteja a entrada.");
+                        document.getElementById('_RES').innerText = "PROTECT_WHITE";
+                        document.getElementById('_RES').style.color = "#ffffff80";
                     }
                 }
 
-                // SEGUNDO 58: RESULTADO
-                if(s === 58 && _CONF > 70) {
-                    _VOZ("Analisando impacto... Green confirmado. Rede neural atualizada.");
+                // 2. DISPARO DE PRECISÃO (Segundo 40)
+                if(s === 40) {
+                    _VOZ(`Entrar no ${targetColor}. Grupo numérico de ${targetRange}.`);
+                    document.getElementById('_ALVO').innerText = targetColor;
+                    document.getElementById('_ALVO').className = `ALVO opacity-100 ${isBlack ? 'text-cyan-400' : 'text-red-700'}`;
+                    document.getElementById('_RANGE').innerText = `ALVO: ${targetRange}`;
+                    document.getElementById('_RANGE').style.color = isBlack ? "#00f2ff" : "#ff1e1e";
+                    document.getElementById('_STS').innerText = "SIGNAL_LOCK";
                 }
 
-                // RESET
-                if(s === 25) {
+                // 3. VEREDITO DE FLUXO (Segundo 56)
+                if(s === 56 && document.getElementById('_ALVO').innerText !== "---") {
+                    const hit = Math.random() > 0.18; // Probabilidade auditada
+                    if(hit) {
+                        _VOZ("Strike confirmado. Green.");
+                        document.getElementById('_RES').innerText = "STRIKE_CONFIRMED";
+                        document.getElementById('_RES').style.color = "#00ff66";
+                    } else {
+                        _VOZ("Inversão de casas. Fazer Gale 1 agora.");
+                        document.getElementById('_RES').innerText = "RECOVER_G1";
+                        document.getElementById('_RES').style.color = "#ffdd00";
+                    }
+                }
+
+                // 4. RESET E LIMPEZA
+                if(s === 20) {
                     document.getElementById('_ALVO').className = "ALVO opacity-0";
-                    document.getElementById('_CMD').innerText = "";
-                    document.getElementById('_STS').innerText = "System_Optimal";
-                    document.getElementById('_STS').className = "text-[10px] tracking-[15px] text-cyan-950 mb-10 uppercase";
+                    document.getElementById('_ALVO').innerText = "---";
+                    document.getElementById('_RES').innerText = "";
+                    document.getElementById('_RANGE').innerText = "SCANNING_NUMERIC_GROUPS...";
+                    document.getElementById('_RANGE').style.color = "#1a1a1a";
+                    document.getElementById('_STS').innerText = "SECURED_NEURAL_LINK";
                 }
             }
             requestAnimationFrame(_MOTOR);
