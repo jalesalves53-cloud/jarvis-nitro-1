@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHER-PRIME | V103 FINAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root { --n: #00f2ff; --b: #000; }
+        body { background: var(--b); color: #fff; font-family: 'Orbitron', sans-serif; height: 100vh; overflow: hidden; margin: 0; }
+        #TELA_LOGIN { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .CAIXA_LOGIN { border: 1px solid rgba(0,242,255,0.05); padding: 50px; width: 380px; text-align: center; background: rgba(2,2,2,0.8); }
+        input { background: #050505; border: 1px solid #111; color: var(--n); padding: 15px; margin: 10px 0; width: 100%; font-family: 'JetBrains Mono'; font-size: 11px; text-align: center; }
+        #PAINEL_ADMIN { position: fixed; top: 0; right: -350px; width: 350px; height: 100vh; background: #010101; border-left: 1px solid var(--n); z-index: 500; transition: 0.5s; padding: 40px; }
+        .PAINEL_ATIVO { right: 0 !important; }
+        .HUD_PRINCIPAL { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; opacity: 0; transition: 1.2s; }
+        .HUD_PRONTO { opacity: 1 !important; }
+        .RELOGIO_FUNDO { font-family: 'JetBrains Mono', monospace; font-size: 250px; opacity: 0.03; position: absolute; pointer-events: none; z-index: -1; }
+        .TEXTO_ALVO { font-size: clamp(40px, 12vw, 110px); font-weight: 900; letter-spacing: 20px; text-transform: uppercase; text-shadow: 0 0 30px rgba(0,0,0,0.8); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="TELA_LOGIN">
+        <div class="text-[9px] tracking-[15px] text-cyan-900 mb-8 font-bold">SEGURANCA_SENTINELA_V103</div>
+        <form onsubmit="event.preventDefault(); _VALIDAR();" class="CAIXA_LOGIN">
+            <input type="password" id="_CAMPO_SENHA" placeholder="CHAVE_DE_ACESSO" autocomplete="current-password">
+            <button type="submit" class="mt-6 w-full border border-cyan-900 py-4 text-[9px] tracking-[5px] hover:bg-cyan-500 hover:text-black transition-all">DECRIPTAR_E_LIGAR</button>
+        </form>
+    </div>
+
+    <div id="PAINEL_ADMIN">
+        <h3 class="text-[10px] text-cyan-500 mb-10 tracking-[5px]">CONFIG_NUCLEO</h3>
+        <div class="space-y-6">
+            <p class="text-[8px] opacity-30 uppercase">Senha_Convidado</p>
+            <input type="text" id="_GUEST_INPUT" value="recruta71">
+            <p class="text-[8px] opacity-30 uppercase">Ajuste_Voz (Segundos)</p>
+            <input type="number" id="_VOZ_DELAY" value="40.2" step="0.1">
+            <button onclick="_SALVAR()" class="w-full bg-cyan-900/10 border border-cyan-500 py-3 text-[9px]">ATUALIZAR_SISTEMA</button>
+        </div>
+    </div>
+
+    <div id="hud" class="HUD_PRINCIPAL">
+        <div id="_TIMER_BG" class="RELOGIO_FUNDO">00</div>
+        
+        <div class="absolute top-10 left-10 right-10 flex justify-between items-center">
+            <div id="_NIVEL_ACESSO" class="text-[8px] tracking-[5px] text-cyan-800">IDENTIFICANDO...</div>
+            <div id="_ICONE_ENGRENAGEM" class="hidden cursor-pointer" onclick="_ABRIR_MENU()">
+                <svg class="w-6 h-6 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <div id="_STATUS_SISTEMA" class="text-[10px] tracking-[12px] text-cyan-900 mb-12">MONITORANDO_DADOS_BLAZE</div>
+            <div id="_EXIBIR_ALVO" class="TEXTO_ALVO opacity-0">---</div>
+            <div id="_ALERTA_BRANCO" class="hidden mt-8 bg-white text-black px-12 py-2 font-black text-xs animate-pulse">PROTEGER_BRANCO</div>
+        </div>
+    </div>
+
+    <script>
+        const _JARVIS = window.speechSynthesis;
+        let _EH_ADMIN = false, _ATIVO = false, _ULTIMO_S = -1;
+        
+        // Chaves em Hexadecimal para Proteção
+        const _CHAVE_MESTRA_HEX = "6a6172766973313032"; // jarvis102
+        let _CHAVE_GUEST_HEX = "726563727574613731"; // recruta71
+
+        function _HEX_PARA_STR(h) {
+            let s = '';
+            for (let i = 0; i < h.length; i += 2) s += String.fromCharCode(parseInt(h.substr(i, 2), 16));
+            return s;
+        }
+
+        function _VALIDAR() {
+            const senha = document.getElementById('_CAMPO_SENHA').value;
+            if(senha === _HEX_PARA_STR(_CHAVE_MESTRA_HEX)) { _EH_ADMIN = true; _INICIAR("COMANDANTE_MASTER"); }
+            else if(senha === _HEX_PARA_STR(_CHAVE_GUEST_HEX)) { _EH_ADMIN = false; _INICIAR("ACESSO_CONVIDADO"); }
+            else { alert("CHAVE_INVALIDA"); }
+        }
+
+        function _INICIAR(tag) {
+            document.getElementById('TELA_LOGIN').style.display = 'none';
+            document.getElementById('hud').classList.add('HUD_PRONTO');
+            document.getElementById('_NIVEL_ACESSO').innerText = tag;
+            if(_EH_ADMIN) document.getElementById('_ICONE_ENGRENAGEM').classList.remove('hidden');
+            _ATIVO = true;
+            _FALAR(_EH_ADMIN ? "Aether Prime online. Bem-vindo, Comandante." : "Acesso autorizado. Sistema pronto.");
+        }
+
+        function _ABRIR_MENU() { document.getElementById('PAINEL_ADMIN').classList.toggle('PAINEL_ATIVO'); }
+
+        function _SALVAR() {
+            const novaSenha = document.getElementById('_GUEST_INPUT').value;
+            let hex = '';
+            for(let i=0; i<novaSenha.length; i++) hex += novaSenha.charCodeAt(i).toString(16);
+            _CHAVE_GUEST_HEX = hex;
+            alert("NUCLEO_RECALIBRADO");
+            _ABRIR_MENU();
+        }
+
+        function _FALAR(t, prioritario = false) {
+            _JARVIS.cancel();
+            const msg = new SpeechSynthesisUtterance(t);
+            msg.lang = 'pt-BR'; msg.pitch = prioritario ? 0.45 : 0.6; msg.rate = 1.45;
+            _JARVIS.speak(msg);
+        }
+
+        function _MOTOR() {
+            if(!_ATIVO) { requestAnimationFrame(_MOTOR); return; }
+            
+            const agora = new Date(), s = agora.getSeconds(), m = agora.getMinutes();
+            const timingVoz = parseFloat(document.getElementById('_VOZ_DELAY').value);
+            document.getElementById('_TIMER_BG').innerText = String(s).padStart(2, '0');
+
+            if(s !== _ULTIMO_S) {
+                _ULTIMO_S = s;
+                const corAlvo = (m % 2 === 0) ? "Preto" : "Vermelho";
+                const temSinal = (m % 2 === 0 || m % 3 === 0);
+                const chanceBranco = (m % 4 === 0);
+
+                // Disparo Visual (35s)
+                if(s === 35 && temSinal) {
+                    const ui = document.getElementById('_EXIBIR_ALVO');
+                    ui.innerText = corAlvo;
+                    ui.className = `TEXTO_ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'text-red-600' : 'text-white'}`;
+                    document.getElementById('_STATUS_SISTEMA').innerText = "ALVO_CONFIRMADO";
+                    if(chanceBranco) document.getElementById('_ALERTA_BRANCO').classList.remove('hidden');
+                }
+
+                // Disparo de Voz (Padrão 40.2s)
+                if(s === Math.floor(timingVoz) && temSinal) {
+                    _FALAR(`Entrar no ${corAlvo}${chanceBranco ? ' com proteção no branco' : ''}`, chanceBranco);
+                    document.getElementById('_STATUS_SISTEMA').innerText = "FASE_DE_ATAQUE";
+                }
+
+                // Reset (31s)
+                if(s === 31) {
+                    document.getElementById('_EXIBIR_ALVO').className = "TEXTO_ALVO opacity-0";
+                    document.getElementById('_ALERTA_BRANCO').classList.add('hidden');
+                    document.getElementById('_STATUS_SISTEMA').innerText = "MONITORANDO_DADOS_BLAZE";
+                }
+            }
+            requestAnimationFrame(_MOTOR);
+        }
+        _MOTOR();
+    </script>
+</body>
+</html>
