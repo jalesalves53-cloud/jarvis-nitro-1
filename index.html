@@ -3,227 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER-PRIME | V105 STARK LEGACY</title>
+    <title>AETHER-PRIME | V106 ZERO DELAY</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;500;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;800&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --jarvis-cyan: #00f2ff; 
-            --stark-gold: #ffdd00; 
-            --ice-white: #f0f9ff;
-            --deep-bg: #000000;
-            --hologram-effect: radial-gradient(circle at center, #01162e 0%, #000000 100%);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        body { 
-            background: var(--hologram-effect); 
-            color: var(--ice-white); 
-            font-family: 'JetBrains Mono', monospace; 
-            font-weight: 300;
-            height: 100vh; 
-            overflow: hidden; 
-            transition: all 0.4s ease;
-        }
+        :root { --cyan: #00f2ff; --gold: #ffdd00; --bg: #000000; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; }
         
-        /* Fontes Específicas */
-        .tech-font { font-family: 'JetBrains Mono', monospace; }
-        .title-font { font-family: 'Orbitron', sans-serif; font-weight: 900; }
-
-        /* Login Premium */
-        #TELA_LOGIN { position: fixed; inset: 0; background: var(--deep-bg); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .CAIXA_LOGIN { border: 1px solid rgba(0,242,255,0.08); padding: 60px; width: 420px; text-align: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); position: relative; }
-        .CAIXA_LOGIN::before { content:''; position: absolute; top:0; left:0; width:100%; height:1px; background: linear-gradient(90deg, transparent, var(--jarvis-cyan), transparent); }
+        /* LOGIN CLEAN */
+        #L_O { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .C_L { border: 1px solid rgba(0,242,255,0.1); padding: 40px; width: 350px; text-align: center; background: #050505; }
+        input { background: #000; border: 1px solid #1a1a1a; color: var(--cyan); padding: 15px; margin: 10px 0; width: 100%; text-align: center; font-size: 12px; }
         
-        input { background: #010101; border: 1px solid #111; color: var(--jarvis-cyan); padding: 18px; margin: 12px 0; width: 100%; font-size: 11px; text-align: center; letter-spacing: 3px; font-weight: 500; }
-        input:focus { border: 1px solid var(--jarvis-cyan); }
+        /* HUD ESTÁTICO (SEM PISCAR) */
+        .HUD { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; opacity: 0; transition: 1s; }
+        .READY { opacity: 1 !important; }
+        .TIMER_BG { font-size: 250px; font-weight: 800; color: var(--cyan); opacity: 0.02; position: absolute; z-index: -1; }
+        .ALVO { font-family: 'Orbitron', sans-serif; font-size: clamp(40px, 10vw, 100px); letter-spacing: 15px; font-weight: 900; text-transform: uppercase; }
         
-        /* Botão Stark Senior */
-        .btn-stark { background: transparent; border: 1px solid var(--stark-gold); color: var(--stark-gold); font-size: 9px; letter-spacing: 6px; font-weight: 700; text-transform: uppercase; padding: 15px; width: 100%; transition: all 0.3s; }
-        .btn-stark:hover { background: var(--stark-gold); color: #000; box-shadow: 0 0 20px rgba(255, 221, 0, 0.4); }
-
-        /* Painel Admin Holográfico */
-        #PAINEL_ADMIN { position: fixed; top: 0; right: -360px; width: 360px; height: 100vh; background: rgba(1, 8, 18, 0.98); border-left: 1px solid var(--jarvis-cyan); z-index: 500; transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1); padding: 50px 40px; }
-        .PAINEL_ATIVO { right: 0 !important; box-shadow: -10px 0 50px rgba(0, 0, 0, 0.9); }
+        /* PAINEL ADMIN */
+        #A_P { position: fixed; top: 0; right: -320px; width: 320px; height: 100vh; background: #050505; border-left: 1px solid var(--cyan); z-index: 500; transition: 0.4s; padding: 30px; }
+        .P_A { right: 0 !important; }
         
-        /* HUD OPERACIONAL */
-        .HUD_PRINCIPAL { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; opacity: 0; transition: 1.5s ease-out; position: relative; }
-        .HUD_PRONTO { opacity: 1 !important; }
-        .RELOGIO_FUNDO { font-size: 280px; font-weight: 800; color: var(--jarvis-cyan); opacity: 0.015; position: absolute; pointer-events: none; z-index: -1; }
-        .TEXTO_ALVO { font-size: clamp(50px, 14vw, 130px); letter-spacing: 25px; text-transform: uppercase; font-weight: 900; }
-        
-        /* Efeitos de Combate (Pulsar Stark) */
-        .flash-green { animation: stark-green 1.2s infinite; }
-        .flash-red { animation: stark-red 1.2s infinite; }
-        .flash-yellow { animation: stark-yellow 0.6s infinite; }
-
-        @keyframes stark-green { 0%, 100% { background: var(--hologram-effect); } 50% { background: #002e12; } }
-        @keyframes stark-red { 0%, 100% { background: var(--hologram-effect); } 50% { background: #3a0000; } }
-        @keyframes stark-yellow { 0%, 100% { background: var(--hologram-effect); } 50% { background: #3d3d00; } }
-        
-        /* Utilitários */
-        .stark-gold-text { color: var(--stark-gold); text-shadow: 0 0 10px rgba(255, 221, 0, 0.5); }
-        .stark-cyan-text { color: var(--jarvis-cyan); text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
+        .gold-text { color: var(--gold); }
+        .cyan-text { color: var(--cyan); }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="TELA_LOGIN">
-        <div class="tech-font text-[10px] tracking-[15px] text-gray-500 mb-10 font-bold uppercase">Aether_Prime_V105 // Stark_Legacy</div>
-        <form onsubmit="event.preventDefault(); _VALIDAR();" class="CAIXA_LOGIN">
-            <h1 class="title-font stark-cyan-text text-xl mb-12 uppercase tracking-[5px]">SEGURANÇA_ATIVA</h1>
-            <input type="password" id="_CAMPO_SENHA" placeholder="CHAVE_MESTRA" autocomplete="current-password">
-            <button type="submit" class="btn-stark mt-8 title-font">VALIDAR_ACESSO</button>
+    <div id="L_O">
+        <div class="text-[8px] tracking-[10px] text-gray-700 mb-6 uppercase">System_Aether_106</div>
+        <form onsubmit="event.preventDefault(); _VAL();" class="C_L">
+            <input type="password" id="_PASS" placeholder="CHAVE_MESTRA">
+            <button type="submit" class="mt-4 w-full border border-cyan-900 py-3 text-[9px] tracking-[4px] hover:bg-cyan-500 hover:text-black transition-all">CONECTAR</button>
         </form>
     </div>
 
-    <div id="PAINEL_ADMIN">
-        <div class="flex justify-between items-center mb-16">
-            <h3 class="title-font text-[12px] text-cyan-500 tracking-[5px]">NÚCLEO_OPERACIONAL</h3>
-            <span onclick="_ABRIR_MENU()" class="cursor-pointer text-gray-600 hover:text-white transition-all text-xl">✕</span>
-        </div>
-        <div class="space-y-10">
-            <div>
-                <p class="tech-font text-[9px] text-gray-400 mb-4 uppercase tracking-[2px]">Senha_Convidado</p>
-                <input type="text" id="_GUEST_INPUT" value="recruta71" class="border-gray-900!">
-            </div>
-            <div>
-                <p class="tech-font text-[9px] text-gray-400 mb-4 uppercase tracking-[2px]">Ajuste_Voz (Voz Jarvis)</p>
-                <input type="number" id="_VOZ_DELAY" value="40.2" step="0.1">
-            </div>
-            <div class="h-[1px] bg-gray-900!"></div>
-            <button onclick="_SALVAR()" class="btn-stark title-font text-[10px]">SINCRONIZAR_ALTERAÇÕES</button>
-        </div>
-        <div class="absolute bottom-10 left-10 tech-font text-[9px] opacity-20">Stark_Industries // Jarvis_Core // ACER_NITRO_OPIIMIZED</div>
+    <div id="A_P">
+        <h3 class="text-[10px] cyan-text mb-8 tracking-[4px]">COMMAND_CENTER</h3>
+        <p class="text-[8px] text-gray-500 mb-2 uppercase">Voz_Delay (Segundos)</p>
+        <input type="number" id="_VD" value="40.0" step="0.1">
+        <button onclick="_SET()" class="w-full bg-cyan-900/10 border border-cyan-500 py-2 text-[9px] mt-4">SALVAR</button>
+        <button onclick="_VAL_L()" class="w-full border border-red-900 py-2 text-[9px] mt-10 opacity-30">DESCONECTAR</button>
     </div>
 
-    <div id="hud" class="HUD_PRINCIPAL">
-        <div id="_TIMER_BG" class="tech-font RELOGIO_FUNDO">00</div>
+    <div id="hud" class="HUD">
+        <div id="_T_BG" class="TIMER_BG">00</div>
         
-        <div class="absolute top-12 left-12 right-12 flex justify-between items-center z-10">
-            <div id="_NIVEL_ACESSO" class="tech-font text-[10px] tracking-[6px] stark-cyan-text uppercase">INShadow_Mode</div>
-            <div id="_ICONE_ENGRENAGEM" class="hidden cursor-pointer" onclick="_ABRIR_MENU()">
-                <svg class="w-6 h-6 text-cyan-600 hover:text-cyan-100 transition-all hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+        <div class="absolute top-8 left-8 right-8 flex justify-between items-center">
+            <div id="_TAG" class="text-[9px] tracking-[4px] cyan-text opacity-40">STANDBY</div>
+            <div id="_SET_ICON" class="hidden cursor-pointer" onclick="document.getElementById('A_P').classList.toggle('P_A')">
+                <svg class="w-5 h-5 text-cyan-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
             </div>
         </div>
 
         <div class="text-center">
-            <div id="_STATUS_SISTEMA" class="tech-font text-[11px] tracking-[14px] text-gray-600 mb-14 uppercase">Listening_Source_Data</div>
-            <div id="_EXIBIR_ALVO" class="title-font TEXTO_ALVO opacity-0">---</div>
-            <div id="_ALERTA_BRANCO" class="hidden mt-10 border border-white text-white px-12 py-2 font-black tech-font text-[10px] tracking-[5px] uppercase animate-pulse">Proteger_Branco</div>
-            <div id="_ALERTA_GALE" class="hidden mt-6 tech-font stark-gold-text text-[12px] font-bold tracking-[6px] uppercase animate-bounce">Fazer_Gale_1</div>
+            <div id="_STS" class="text-[9px] tracking-[10px] text-gray-700 mb-8 uppercase">Aguardando_Analise</div>
+            <div id="_ALVO" class="ALVO opacity-0">---</div>
+            <div id="_GALE" class="hidden mt-4 text-[11px] gold-text font-bold tracking-[4px] animate-pulse">PREPARAR GALE 1</div>
         </div>
     </div>
 
     <script>
-        const _JARVIS = window.speechSynthesis;
-        let _EH_ADMIN = false, _ATIVO = false, _ULTIMO_S = -1;
-        
-        const _CHAVE_MESTRA_HEX = "6a6172766973313032"; 
-        let _CHAVE_GUEST_HEX = "726563727574613731";
+        const _SP = window.speechSynthesis;
+        let _ON = false, _LS = -1, _ADM = false;
 
-        function _HEX_PARA_STR(h) {
-            let s = ''; for (let i = 0; i < h.length; i += 2) s += String.fromCharCode(parseInt(h.substr(i, 2), 16));
-            return s;
+        function _VAL() {
+            const p = document.getElementById('_PASS').value;
+            if(p === "jarvis102") { _ADM = true; _STR("COMANDANTE"); }
+            else if(p === "recruta71") { _ADM = false; _STR("OPERADOR"); }
+            else { alert("ACESSO NEGADO"); }
         }
 
-        function _VALIDAR() {
-            const senha = document.getElementById('_CAMPO_SENHA').value;
-            if(senha === _HEX_PARA_STR(_CHAVE_MESTRA_HEX)) { _EH_ADMIN = true; _INICIAR("COMS_MASTER"); }
-            else if(senha === _HEX_PARA_STR(_CHAVE_GUEST_HEX)) { _EH_ADMIN = false; _INICIAR("ACESSO_CONVIDADO"); }
-            else { alert("SIGNAL_REJECTED: KEY_INVALID"); }
+        function _STR(t) {
+            document.getElementById('L_O').style.display = 'none';
+            document.getElementById('hud').classList.add('READY');
+            document.getElementById('_TAG').innerText = t;
+            if(_ADM) document.getElementById('_SET_ICON').classList.remove('hidden');
+            _ON = true;
+            _VOZ("Sistema Stark online. Filtros de luz aplicados.");
         }
 
-        function _INICIAR(tag) {
-            document.getElementById('TELA_LOGIN').style.display = 'none';
-            document.getElementById('hud').classList.add('HUD_PRONTO');
-            document.getElementById('_NIVEL_ACESSO').innerText = tag;
-            if(_EH_ADMIN) document.getElementById('_ICONE_ENGRENAGEM').classList.remove('hidden');
-            _ATIVO = true;
-            _FALAR("Aether Prime Legacy online. Jarvis Core operacional.", true);
+        function _SET() { alert("DADOS SINCRONIZADOS"); document.getElementById('A_P').classList.remove('P_A'); }
+
+        function _VOZ(t) {
+            _SP.cancel();
+            const m = new SpeechSynthesisUtterance(t);
+            m.lang = 'pt-BR'; m.pitch = 0.6; m.rate = 1.5;
+            _SP.speak(m);
         }
 
-        function _ABRIR_MENU() { document.getElementById('PAINEL_ADMIN').classList.toggle('PAINEL_ATIVO'); }
-
-        function _SALVAR() {
-            const nova = document.getElementById('_GUEST_INPUT').value;
-            let hex = ''; for(let i=0; i<nova.length; i++) hex += nova.charCodeAt(i).toString(16);
-            _CHAVE_GUEST_HEX = hex; alert("SISTEMA_SINCRONIZADO"); _ABRIR_MENU();
-        }
-
-        function _FALAR(t, p = false) {
-            _JARVIS.cancel();
-            const msg = new SpeechSynthesisUtterance(t);
-            msg.lang = 'pt-BR'; msg.pitch = p ? 0.45 : 0.6; msg.rate = 1.45;
-            _JARVIS.speak(msg);
-        }
-
-        // Keep-Alive da Voz do Jarvis
-        function _REINICIAR_VOZ() { _JARVIS.cancel(); _SP_KEEP_ALIVE("Monitorando tendências silenciosamente."); }
-
-        function _MOTOR() {
-            if(!_ATIVO) { requestAnimationFrame(_MOTOR); return; }
+        // MOTOR DE ALTA VELOCIDADE (60 FPS)
+        function _LOOP() {
+            if(!_ON) { requestAnimationFrame(_LOOP); return; }
             
-            const agora = new Date(), s = agora.getSeconds(), m = agora.getMinutes();
-            const timingVoz = parseFloat(document.getElementById('_VOZ_DELAY').value);
-            document.getElementById('_TIMER_BG').innerText = String(s).padStart(2, '0');
+            const n = new Date(), s = n.getSeconds(), m = n.getMinutes();
+            const delay = parseFloat(document.getElementById('_VD').value);
+            document.getElementById('_T_BG').innerText = String(s).padStart(2, '0');
 
-            if(s !== _ULTIMO_S) {
-                _ULTIMO_S = s;
-                const corAlvo = (m % 2 === 0) ? "Preto" : "Vermelho";
-                const temSinal = (m % 2 === 0 || m % 3 === 0);
-                const chanceBranco = (m % 4 === 0);
+            if(s !== _LS) {
+                _LS = s;
+                const cor = (m % 2 === 0) ? "Preto" : "Vermelho";
+                const sig = (m % 2 === 0 || m % 3 === 0);
 
-                // 35s: Alerta Visual HUD
-                if(s === 35 && temSinal) {
-                    document.getElementById('_EXIBIR_ALVO').innerText = corAlvo;
-                    document.getElementById('_EXIBIR_ALVO').className = `title-font TEXTO_ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'text-red-600' : 'stark-cyan-text'}`;
-                    document.getElementById('_STATUS_SISTEMA').innerText = "TARGET_ACQUIRED";
-                    document.getElementById('_STATUS_SISTEMA').className = "tech-font text-[11px] tracking-[14px] stark-cyan-text mb-14 uppercase";
-                    if(chanceBranco) document.getElementById('_ALERTA_BRANCO').classList.remove('hidden');
+                // Entrada Instantânea (Voz)
+                if(s === Math.floor(delay) && sig) {
+                    _VOZ(`Entrada no ${cor}`);
+                    document.getElementById('_ALVO').innerText = cor;
+                    document.getElementById('_ALVO').className = `ALVO opacity-100 ${cor === 'Vermelho' ? 'text-red-700' : 'cyan-text'}`;
+                    document.getElementById('_STS').innerText = "STRIKE_CONFIRMED";
                 }
 
-                // 40s: Entrada Original (Voz)
-                if(s === Math.floor(timingVoz) && temSinal) {
-                    _FALAR(`Preparar entrada ${corAlvo}`);
+                // G1 Preciso (Voz)
+                if(s === 44 && sig) {
+                    document.getElementById('_GALE').classList.remove('hidden');
+                    _VOZ("Atenção, Gale 1");
                 }
 
-                // 43s: ALERTA DE GALE 1 ANTECIPADO (TELA DOURADA)
-                if(s === 43 && temSinal) {
-                    document.body.className = "flash-yellow";
-                    document.getElementById('_ALERTA_GALE').classList.remove('hidden');
-                    document.getElementById('_STATUS_SISTEMA').innerText = "GALE_IMINENTE";
-                    document.getElementById('_STATUS_SISTEMA').className = "tech-font text-[11px] tracking-[14px] stark-gold-text mb-14 uppercase";
-                    _FALAR("Foco, preparar Gale 1.", true);
-                }
-
-                // 58s: Confirmação de Resultado (Simulada p/ Green)
-                if(s === 58 && temSinal) {
-                    const sucesso = true; // Simulação
-                    if(sucesso) {
-                        document.body.className = "flash-green";
-                        _FALAR("Green confirmado. Excelente operação.", true);
-                    } else {
-                        document.body.className = "flash-red";
-                        _FALAR("Loss detectado. Reiniciando protocolos.", true);
-                    }
-                }
-
-                // 30s: Reset e Purga de Cache (Keep-Alive)
-                if(s === 30) {
-                    document.body.className = "";
-                    document.getElementById('_EXIBIR_ALVO').className = "title-font TEXTO_ALVO opacity-0";
-                    document.getElementById('_ALERTA_BRANCO').classList.add('hidden');
-                    document.getElementById('_ALERTA_GALE').classList.add('hidden');
-                    document.getElementById('_STATUS_SISTEMA').innerText = "LISTENING_SOURCE_DATA";
-                    document.getElementById('_STATUS_SISTEMA').className = "tech-font text-[11px] tracking-[14px] text-gray-600 mb-14 uppercase";
-                    
-                    if(m % 10 === 0) _FALAR(""); // Silencioso Keep-Alive
+                // Reset Tático (Limpa a tela para a próxima)
+                if(s === 25) {
+                    document.getElementById('_ALVO').className = "ALVO opacity-0";
+                    document.getElementById('_GALE').classList.add('hidden');
+                    document.getElementById('_STS').innerText = "MONITORANDO_DADOS";
                 }
             }
-            requestAnimationFrame(_MOTOR);
+            requestAnimationFrame(_LOOP);
         }
-        _MOTOR();
+        _LOOP();
     </script>
 </body>
 </html>
