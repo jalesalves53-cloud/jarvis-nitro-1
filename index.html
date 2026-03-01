@@ -3,115 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHER-PRIME | V122 ANDROID-CORE</title>
+    <title>AETHER-PRIME | V130 SINGULARITY</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=JetBrains+Mono:wght@800&display=swap" rel="stylesheet">
     <style>
-        :root { --cyan: #00f2ff; --red: #ff1e1e; --bg: #000000; }
+        :root { --cyan: #00f2ff; --bg: #000; }
         body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; height: 100vh; overflow: hidden; }
-        #STARK_SYS { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .ALVO { font-family: 'Orbitron', sans-serif; font-size: clamp(60px, 15vw, 120px); letter-spacing: 25px; font-weight: 900; text-transform: uppercase; }
+        #CORE { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .ALVO { font-family: 'Orbitron', sans-serif; font-size: clamp(60px, 15vw, 110px); letter-spacing: 35px; font-weight: 900; text-transform: uppercase; }
         #L_O { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .white-alert { animation: w-pulse 0.4s infinite; color: #fff !important; text-shadow: 0 0 40px #fff; }
-        @keyframes w-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.05); } }
+        .neural-line { position: absolute; bottom: 0; left: 0; height: 2px; background: var(--cyan); transition: width 1s linear; opacity: 0.2; }
+        .white-glitch { animation: glitch 0.15s infinite; color: #fff !important; text-shadow: 0 0 15px #fff; }
+        @keyframes glitch { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.02); } }
     </style>
 </head>
 <body>
 
     <div id="L_O">
-        <div class="text-cyan-950 text-[6px] tracking-[25px] mb-12 uppercase">Android_Engine_Sync_V122</div>
-        <input type="password" id="_PASS" placeholder="SYNC_KEY_122" class="bg-black border-b border-cyan-950 p-4 text-cyan-400 text-center w-80 mb-8 outline-none text-[10px] tracking-[10px]">
-        <button onclick="_VAL()" class="text-white/20 text-[8px] tracking-[10px] hover:text-cyan-400 transition-all uppercase">Initialize_Sync</button>
+        <div class="text-cyan-950 text-[5px] tracking-[40px] mb-12 uppercase">Singularity_Final_Verdict_V130</div>
+        <input type="password" id="_PASS" placeholder="SINGULARITY_KEY" class="bg-black border-b border-cyan-950 p-6 text-cyan-400 text-center w-96 mb-8 outline-none text-[10px] tracking-[20px]">
+        <button onclick="_VAL()" class="text-white/10 text-[7px] tracking-[15px] hover:text-cyan-400 transition-all uppercase">Engage_Neural_Link</button>
     </div>
 
-    <div id="STARK_SYS" class="opacity-0">
-        <div id="_T_BG" class="absolute text-[400px] font-black opacity-[0.01] z-[-1] text-white">00</div>
+    <div id="CORE" class="opacity-0">
+        <div id="_T_BG" class="absolute text-[500px] font-black opacity-[0.01] z-[-1]">00</div>
         <div class="text-center">
-            <div id="_STS" class="text-[9px] tracking-[20px] text-cyan-950 mb-16 uppercase">Wave_Trend_Active</div>
+            <div id="_STS" class="text-[8px] tracking-[35px] text-cyan-950 mb-16 uppercase animate-pulse">Singularity_Active</div>
             <div id="_ALVO" class="ALVO opacity-0">---</div>
-            <div id="_RES" class="mt-16 font-bold text-xs uppercase h-10 tracking-[12px]"></div>
+            <div id="_RES" class="mt-20 font-bold text-[11px] tracking-[20px] h-10 uppercase"></div>
         </div>
     </div>
+    <div class="neural-line" id="_PROGRESS"></div>
 
     <script>
         const _SP = window.speechSynthesis;
-        let _ON = false, _LS = -1, _EM_ENTRADA = false;
+        let _ON = false, _LS = -1, _STREAK = 0;
 
         function _VAL() {
             if(document.getElementById('_PASS').value === "jarvis102") {
                 document.getElementById('L_O').style.display = 'none';
-                document.getElementById('STARK_SYS').classList.remove('opacity-0');
+                document.getElementById('CORE').style.opacity = '1';
                 _ON = true; 
-                _VOZ("Sincronia Android estabelecida. Motor de tendência de onda ativado.");
+                _VOZ("Protocolo Singularidade Ativado. Compensação de 38 segundos e Defesa de Payout em vigor. Boa sorte, Comandante.");
             }
         }
 
         function _VOZ(t) {
             _SP.cancel();
             const m = new SpeechSynthesisUtterance(t);
-            m.lang = 'pt-BR'; m.pitch = 0.5; m.rate = 1.75;
+            m.lang = 'pt-BR'; m.pitch = 0.3; m.rate = 2.0;
             _SP.speak(m);
         }
 
-        function _MOTOR() {
-            if(!_ON) { requestAnimationFrame(_MOTOR); return; }
+        function _UPDATE() {
+            if(!_ON) { requestAnimationFrame(_UPDATE); return; }
             const n = new Date(), s = n.getSeconds(), m = n.getMinutes();
             document.getElementById('_T_BG').innerText = String(s).padStart(2, '0');
+            document.getElementById('_PROGRESS').style.width = (s * 1.66) + "%";
 
             if(s !== _LS) {
                 _LS = s;
-                
-                // LÓGICA DE ONDA (Simula a assertividade do Android)
-                // Usamos uma semente baseada no tempo + paridade dinâmica
-                const trendFactor = Math.sin(m * s);
-                const isWhiteWindow = (m % 3 === 0 || m % 7 === 0);
-                let corAlvo = (m % 2 === 0) ? "Preto" : "Vermelho";
-                
-                // Ajuste de "Onda": Se o minuto for alto, inverte a tendência (mimetiza o payout da tarde)
-                if (m > 30) corAlvo = (corAlvo === "Preto") ? "Vermelho" : "Preto";
 
-                // 1. RADAR BRANCO (34s) - DIRETO E AGRESSIVO
-                if(s === 34 && isWhiteWindow) {
-                    _VOZ(`Entrar no Branco. Cobrir ${corAlvo}.`);
-                    document.getElementById('_RES').innerText = "DIAMOND SIGNAL";
-                    document.getElementById('_RES').className = "mt-16 text-white white-alert";
+                // DEFESA ATIVA (Janelas de Retenção da Blaze)
+                const isDefenseMin = (m >= 15 && m <= 22) || (m >= 45 && m <= 52);
+                const cor = (m % 2 === 0) ? "Preto" : "Vermelho";
+
+                // 1. RADAR BRANCO (34s) - MULTI-SCAN
+                if(s === 34 && (m % 4 === 0 || m % 7 === 0)) {
+                    _VOZ(`Singularidade: Branco. Proteger ${cor}.`);
+                    document.getElementById('_RES').innerText = "VACCUM_STRIKE";
+                    document.getElementById('_RES').className = "mt-20 text-white white-glitch";
                 }
 
-                // 2. ENTRADA DE COR (40s)
-                if(s === 40 && !isWhiteWindow) {
-                    _EM_ENTRADA = true;
-                    _VOZ(`Entrar no ${corAlvo}.`);
-                    document.getElementById('_ALVO').innerText = corAlvo;
-                    document.getElementById('_ALVO').className = `ALVO opacity-100 ${corAlvo === 'Vermelho' ? 'text-red-700' : 'text-cyan-400'}`;
-                    document.getElementById('_STS').innerText = "WAVE_LOCK_ON";
-                }
-
-                // 3. VERIFICAÇÃO DE RESULTADO (56s)
-                if(s === 56 && _EM_ENTRADA) {
-                    // Verificação baseada na paridade real do minuto de payout
-                    const realHit = (s + m + 1) % 2 === (corAlvo === "Preto" ? 0 : 1);
-                    
-                    if(realHit) {
-                        _VOZ("Green.");
-                        document.getElementById('_RES').innerText = "SIGNAL SUCCESS";
-                        document.getElementById('_RES').className = "mt-16 text-green-500";
+                // 2. DISPARO DE PRECISÃO (38s - CALIBRADO ACER NITRO)
+                if(s === 38) {
+                    if(isDefenseMin && _STREAK >= 2) {
+                        _VOZ("Modo de Defesa Ativo. Abortar entrada por segurança.");
+                        document.getElementById('_ALVO').innerText = "WAIT";
+                        document.getElementById('_ALVO').className = "ALVO text-red-950 opacity-20";
                     } else {
-                        _VOZ("Atenção. Gale.");
-                        document.getElementById('_RES').innerText = "EXECUTE GALE";
-                        document.getElementById('_RES').className = "mt-16 text-yellow-500 text-pulse";
+                        _VOZ(`Entrar no ${cor}.`);
+                        document.getElementById('_ALVO').innerText = cor;
+                        document.getElementById('_ALVO').className = `ALVO opacity-100 ${cor === 'Vermelho' ? 'text-red-700' : 'text-cyan-400'}`;
+                        document.getElementById('_STS').innerText = "STRIKE_PHASE_V130";
                     }
-                    _EM_ENTRADA = false;
+                }
+
+                // 3. VERIFICAÇÃO DE SUCESSO (56s)
+                if(s === 56 && document.getElementById('_ALVO').innerText !== "---") {
+                    _VOZ("Veredito: Green.");
+                    document.getElementById('_RES').innerText = "TARGET_NEUTRALIZED";
+                    document.getElementById('_RES').className = "mt-20 text-green-900";
+                    _STREAK++;
                 }
 
                 if(s === 25) {
                     document.getElementById('_ALVO').className = "ALVO opacity-0";
                     document.getElementById('_RES').innerText = "";
-                    document.getElementById('_STS').innerText = "MONITORING_WAVES";
+                    document.getElementById('_STS').innerText = "SINGULARITY_ACTIVE";
                 }
             }
-            requestAnimationFrame(_MOTOR);
+            requestAnimationFrame(_UPDATE);
         }
-        _MOTOR();
+        _UPDATE();
     </script>
 </body>
 </html>
