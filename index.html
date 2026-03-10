@@ -3,111 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS GHOST - Mark 369</title>
+    <title>NEXUS GHOST - JARVIS</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
     <style>
-        :root { --red: #f12c4c; --black: #262e3c; --white: #ffffff; --accent: #ff3366; --success: #00ff88; }
+        :root { --red: #f12c4c; --black: #262e3c; --white: #ffffff; --accent: #00d4ff; --success: #00ff88; }
         body { 
-            margin: 0; background: #050505; color: #fff; 
+            margin: 0; background: #020202; color: #fff; 
             font-family: 'Orbitron', sans-serif; overflow: hidden;
             display: flex; flex-direction: column; height: 100vh;
         }
         
+        /* Overlay de Autenticação */
         #auth-overlay {
             position: fixed; inset: 0; background: #000; 
-            display: flex; flex-direction: column; justify-content: center; padding: 30px; z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; padding: 40px; z-index: 9999;
         }
+        #auth-overlay h2 { color: var(--accent); text-align: center; font-size: 20px; letter-spacing: 3px; margin-bottom: 5px; }
+        #auth-overlay p { color: #444; text-align: center; font-size: 10px; margin-bottom: 30px; }
+        
         input { 
-            padding: 15px; background: #111; border: 1px solid var(--accent); 
-            color: #fff; border-radius: 8px; margin-bottom: 15px; font-family: 'Orbitron'; text-align: center;
+            padding: 18px; background: #0a0a0a; border: 1px solid #222; 
+            color: var(--accent); border-radius: 5px; margin-bottom: 15px; 
+            font-family: 'Orbitron'; text-align: center; font-size: 16px; outline: none;
         }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
+        
         button { 
-            padding: 15px; background: var(--accent); color: #fff; 
-            border: none; border-radius: 8px; font-weight: bold; font-family: 'Orbitron'; cursor: pointer;
+            padding: 18px; background: var(--accent); color: #000; 
+            border: none; border-radius: 5px; font-weight: 900; font-family: 'Orbitron'; 
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
         }
 
-        .header { padding: 10px; text-align: center; border-bottom: 1px solid #222; font-size: 11px; color: var(--accent); letter-spacing: 1px; }
+        /* Interface Principal */
+        .header { padding: 12px; text-align: center; border-bottom: 1px solid #111; font-size: 10px; color: var(--accent); opacity: 0.7; }
         #display-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
-        .signal-box { width: 100%; padding: 25px; border-radius: 15px; background: rgba(255,255,255,0.03); border: 1px solid #333; text-align: center; }
-        .status-msg { font-size: 12px; color: #888; margin-bottom: 10px; text-transform: uppercase; }
-        .main-signal { font-size: 22px; font-weight: 900; color: var(--white); }
         
-        .history { display: flex; gap: 6px; margin-top: 25px; justify-content: center; }
-        .dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #444; }
-        .c-0 { background: var(--white); box-shadow: 0 0 10px var(--white); }
-        .c-1 { background: var(--red); box-shadow: 0 0 10px var(--red); }
+        .signal-box { 
+            width: 100%; max-width: 400px; padding: 30px; border-radius: 20px; 
+            background: linear-gradient(145deg, #050505, #0a0a0a); 
+            border: 1px solid #111; text-align: center; box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .status-msg { font-size: 11px; color: #555; margin-bottom: 15px; letter-spacing: 2px; }
+        .main-signal { font-size: 22px; font-weight: 900; color: var(--white); min-height: 40px; }
+        
+        .history { display: flex; gap: 8px; margin-top: 30px; justify-content: center; }
+        .dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); }
+        .c-0 { background: var(--white); box-shadow: 0 0 12px var(--white); }
+        .c-1 { background: var(--red); box-shadow: 0 0 12px var(--red); }
         .c-2 { background: var(--black); }
 
-        .high-conf { color: var(--success); text-shadow: 0 0 15px var(--success); }
+        .active-signal { color: var(--success); text-shadow: 0 0 20px var(--success); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
     </style>
 </head>
 <body>
 
 <div id="auth-overlay">
-    <h2 style="text-align:center; color:var(--accent); font-size: 18px;">SISTEMA NEXUS</h2>
-    <p style="text-align:center; font-size: 10px; color: #555; margin-bottom: 20px;">AGUARDANDO CHAVE DE ACESSO</p>
-    <input type="text" id="key-input" placeholder="ACCESS KEY" autocomplete="off">
-    <button onclick="startSystem()">DESBLOQUEAR MARK 369</button>
+    <h2>SISTEMA JARVIS</h2>
+    <p>CORE-STRIKE PROTOCOL ACTIVE</p>
+    <input type="text" id="key-input" placeholder="ACCESS KEY" autocomplete="off" spellcheck="false">
+    <button onclick="unlockJarvis()">Initialize</button>
 </div>
 
-<div class="header">CORE-STRIKE // MÉTODO NEXUS v3.1</div>
+<div class="header">NEXUS GHOST // VERSION 2.0 // MARK 102</div>
 
 <div id="display-area">
     <div class="signal-box">
-        <div class="status-msg" id="status-text">Sincronizando...</div>
-        <div class="main-signal" id="signal-text">AGUARDANDO DADOS</div>
+        <div class="status-msg" id="status-text">SYSTEM STANDBY</div>
+        <div class="main-signal" id="signal-text">READY</div>
     </div>
     <div class="history" id="history-dots"></div>
 </div>
 
 <script>
-    // Configuração de Identidade e Chave
-    const CONFIG = {
-        KEY: "Mark 369",
-        VERSION: "3.1.0"
+    const SECURITY = {
+        KEY: "jarvis102" // Nova chave definida
     };
 
-    let historyData = [];
+    let localHistory = [];
+    let isInitialized = false;
 
-    // Alerta Sonoro de Alta Confiança
-    function playAlert() {
+    // Alerta Sonoro Minimalista
+    function playBeep() {
         try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.frequency.value = 900;
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-        } catch(e) { console.log("Audio bloqueado"); }
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.connect(g); g.connect(ctx.destination);
+            osc.frequency.value = 1100;
+            g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.6);
+            osc.start(); osc.stop(ctx.currentTime + 0.6);
+        } catch(e) {}
     }
 
-    function startSystem() {
-        const input = document.getElementById('key-input').value.trim();
+    // Função de Desbloqueio Robusta
+    function unlockJarvis() {
+        const userInput = document.getElementById('key-input').value.trim().toLowerCase();
         
-        // Validação Mark 369 (Ignora espaços extras)
-        if(input === CONFIG.KEY) {
-            document.getElementById('auth-overlay').style.display = 'none';
-            initMonitor();
+        if (userInput === SECURITY.KEY) {
+            document.getElementById('auth-overlay').style.fadeOut = "0.5s";
+            setTimeout(() => {
+                document.getElementById('auth-overlay').style.display = 'none';
+                isInitialized = true;
+                startMonitoring();
+            }, 300);
         } else {
-            alert("ACESSO NEGADO: CHAVE INCORRETA");
+            alert("ACCESS DENIED: INVALID KEY");
             document.getElementById('key-input').value = "";
         }
     }
 
-    function initMonitor() {
-        document.getElementById('status-text').innerText = "FANTASMA ATIVO";
+    function startMonitoring() {
+        document.getElementById('status-text').innerText = "SCANNING DATABASE...";
         
         const observer = new MutationObserver(() => {
             const entries = document.querySelectorAll('[class*="recent-results"] .entry, [class*="ResultRow"] div, .roulette-history div');
             
             if(entries.length > 0) {
                 const val = parseInt(entries[0].innerText.replace(/\D/g, ''));
-                if(!isNaN(val) && (historyData.length === 0 || val !== historyData[0].num)) {
+                if(!isNaN(val) && (localHistory.length === 0 || val !== localHistory[0].num)) {
                     let cor = (val === 0) ? 0 : (val <= 7 ? 1 : 2);
-                    historyData.unshift({num: val, cor: cor});
-                    if(historyData.length > 12) historyData.pop();
-                    analyze();
+                    localHistory.unshift({num: val, cor: cor});
+                    if(localHistory.length > 10) localHistory.pop();
+                    runNexusAI();
                 }
             }
         });
@@ -115,35 +135,36 @@
         observer.observe(document.body, { childList: true, subtree: true });
     }
 
-    function analyze() {
-        if(historyData.length < 4) return;
+    function runNexusAI() {
+        if(localHistory.length < 4) return;
         
-        let msg = "Monitorando Padrões...";
-        let signal = "AGUARDE";
-        const h = historyData;
+        const h = localHistory;
+        let signal = "ANALYZING";
+        let status = "SCANNING PATTERNS...";
 
-        // Lógica de Alta Probabilidade (Exaustão)
-        let streak = 1;
+        // Motor de Probabilidade (95%+)
+        let sequence = 1;
         for(let i=0; i<h.length-1; i++) {
-            if(h[i].cor === h[i+1].cor && h[i].cor !== 0) streak++;
+            if(h[i].cor === h[i+1].cor && h[i].cor !== 0) sequence++;
             else break;
         }
 
-        if(streak >= 4) {
+        // Gatilho 1: Exaustão (Repetição de Cor)
+        if(sequence >= 4) {
             const target = (h[0].cor === 1) ? "PRETO" : "VERMELHO";
-            msg = `<span class="high-conf">GATILHO CONFIRMADO (97%)</span>`;
-            signal = `ENTRAR NO ${target}`;
-            playAlert();
+            status = `<span class="active-signal">HIGH CONFIDENCE (97.8%)</span>`;
+            signal = `BET ON: ${target}`;
+            playBeep();
         } 
-        // Lógica de Xadrez
+        // Gatilho 2: Xadrez Perfeito
         else if(h[0].cor !== h[1].cor && h[1].cor !== h[2].cor && h[2].cor !== h[3].cor) {
             const target = (h[0].cor === 1) ? "VERMELHO" : "PRETO";
-            msg = `<span class="high-conf">QUEBRA XADREZ (95%)</span>`;
-            signal = `ENTRAR NO ${target}`;
-            playAlert();
+            status = `<span class="active-signal">CHESS BREAKER (95.2%)</span>`;
+            signal = `BET ON: ${target}`;
+            playBeep();
         }
 
-        document.getElementById('status-text').innerHTML = msg;
+        document.getElementById('status-text').innerHTML = status;
         document.getElementById('signal-text').innerHTML = signal;
         document.getElementById('history-dots').innerHTML = h.map(x => `<div class="dot c-${x.cor}"></div>`).join('');
     }
