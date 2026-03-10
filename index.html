@@ -1,261 +1,164 @@
-<!DOCTYPE html>
+
+      
+      <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AETHER | WHITE-PREDICT V8 - IA Leve Blaze Double</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-  <style>
-    body { background: #050505; color: white; height: 100vh; margin: 0; overflow: hidden; font-family: 'Orbitron', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    #loading-overlay { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
-    #password-input { background: black; border: none; border-bottom: 2px solid rgba(255,255,255,0.3); padding: 1rem 2rem; color: white; font-size: 1.5rem; width: 320px; text-align: center; outline: none; letter-spacing: 12px; transition: all 0.3s; }
-    #password-input:focus { border-bottom-color: #aaa; letter-spacing: 16px; }
-    #signal { position: absolute; inset: 0; pointer-events: none; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); }
-    .flash-text { font-size: clamp(5rem, 20vw, 16rem); text-shadow: 0 0 60px #fff, 0 0 120px #ff00cc; animation: pulse 0.25s infinite alternate; }
-    @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.6; } 100% { transform: scale(1.12); opacity: 1; } }
-    #history { position: absolute; bottom: 120px; left: 10px; right: 10px; max-height: 120px; overflow-y: auto; background: rgba(255,255,255,0.05); padding: 0.8rem; border-radius: 8px; font-size: 0.85rem; }
-    .color-box { display: inline-block; width: 16px; height: 16px; margin-right: 4px; border: 1px solid #fff; }
-    .white { background: white; } .red { background: red; } .black { background: black; }
-    #prediction { position: absolute; top: 30px; left: 0; right: 0; text-align: center; font-size: 1.3rem; color: #ffcc00; text-shadow: 0 0 12px #ff9900; }
-    #status { position: absolute; bottom: 20px; right: 20px; color: rgba(255,255,255,0.7); font-size: 0.85rem; }
-    #accuracy { position: absolute; bottom: 50px; right: 20px; color: #00ff99; font-size: 0.95rem; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEXUS GHOST MOBILE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --red: #f12c4c; --black: #262e3c; --white: #ffffff; --accent: #ff3366; }
+        body { 
+            margin: 0; background: #050505; color: #fff; 
+            font-family: 'Orbitron', sans-serif; overflow: hidden;
+            display: flex; flex-direction: column; height: 100vh;
+        }
+        
+        /* Layout Mobile */
+        .header { padding: 10px; text-align: center; border-bottom: 1px solid #222; font-size: 12px; color: var(--accent); }
+        
+        #display-area { 
+            flex: 1; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 20px;
+        }
+
+        .signal-box {
+            width: 100%; padding: 20px; border-radius: 15px;
+            background: rgba(255,255,255,0.03); border: 2px solid #333;
+            text-align: center; box-sizing: border-box;
+        }
+
+        .status-msg { font-size: 14px; color: #888; margin-bottom: 10px; }
+        .main-signal { font-size: 24px; font-weight: 900; letter-spacing: 2px; }
+        
+        .history { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+        .dot { width: 18px; height: 18px; border-radius: 50%; border: 1px solid #444; }
+        
+        /* Cores das Pedras */
+        .c-0 { background: var(--white); box-shadow: 0 0 10px var(--white); }
+        .c-1 { background: var(--red); box-shadow: 0 0 10px var(--red); }
+        .c-2 { background: var(--black); box-shadow: 0 0 5px #555; }
+
+        /* Login/Key */
+        #auth-overlay {
+            position: fixed; inset: 0; background: #000; 
+            display: flex; flex-direction: column; justify-content: center; padding: 30px; z-index: 100;
+        }
+        input { 
+            padding: 15px; background: #111; border: 1px solid var(--accent); 
+            color: #fff; border-radius: 8px; margin-bottom: 15px; font-family: 'Orbitron';
+        }
+        button { 
+            padding: 15px; background: var(--accent); color: #fff; 
+            border: none; border-radius: 8px; font-weight: bold; font-family: 'Orbitron';
+        }
+
+        .high-conf { color: #00ff88; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+    </style>
 </head>
 <body>
 
-  <div id="loading-overlay">
-    <input type="password" id="password-input" placeholder="WHITE_KEY" autocomplete="off">
-    <button id="activate-btn" class="text-white/50 text-base tracking-widest uppercase mt-6 hover:text-white/80 transition">ATIVAR</button>
-  </div>
+<div id="auth-overlay">
+    <h2 style="text-align:center; color:var(--accent)">NEXUS ACCESS</h2>
+    <input type="password" id="key-input" placeholder="DIGITE SUA CHAVE">
+    <button onclick="startSystem()">ENTRAR NO SISTEMA</button>
+</div>
 
-  <div id="signal"><div class="flash-text">BRANCO</div></div>
+<div class="header">CORE-STRIKE // MÉTODO NEXUS v3</div>
 
-  <div id="prediction">Aguardando dados para previsão...</div>
+<div id="display-area">
+    <div class="signal-box">
+        <div class="status-msg" id="status-text">AGUARDANDO CONEXÃO...</div>
+        <div class="main-signal" id="signal-text">---</div>
+    </div>
 
-  <div id="history"></div>
+    <div class="history" id="history-dots">
+        </div>
+</div>
 
-  <div id="accuracy">Acurácia ≈ --%</div>
-
-  <div id="status">Status: Aguardando ativação...</div>
-
-  <script>
-    const synth = window.speechSynthesis;
-    let isActive = false;
-    let ws = null;
-    let history = [];
-    const maxHistory = 1500;
-    const colorNames = {0:'Branco', 1:'Vermelho', 2:'Preto'};
-    let model = null;
-    const sequenceLength = 15;
-    const retrainEvery = 12;
-    let roundCounter = 0;
-    let rollingCorrect = 0;
-    let rollingTotal = 0;
-    let rollingPreds = [];
-
-    function speak(text) {
-      synth.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'pt-BR'; u.pitch = 0.9; u.rate = 1.8;
-      synth.speak(u);
+<script>
+    const GHOST_KEY = "NEXUS-2026-STRIKE";
+    let historyData = [];
+    
+    // Alerta Sonoro
+    function playAlert() {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.value = 1200;
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.8);
     }
 
-    function loadHistory() {
-      const saved = localStorage.getItem('blazeHistV8');
-      if (saved) history = JSON.parse(saved);
-    }
-
-    function saveHistory() {
-      localStorage.setItem('blazeHistV8', JSON.stringify(history.slice(0, maxHistory)));
-    }
-
-    function updateHistory(colorId, roll) {
-      history.unshift({color: colorId, roll});
-      if (history.length > maxHistory) history.pop();
-      saveHistory();
-
-      const disp = history.slice(0, 40);
-      document.getElementById('history').innerHTML = disp.map(h =>
-        `<div><span class="color-box ${h.color===0?'white':h.color===1?'red':'black'}"></span>${colorNames[h.color]} (${h.roll})</div>`
-      ).join('');
-
-      roundCounter++;
-      if (history.length > sequenceLength + 1 && roundCounter % retrainEvery === 0) {
-        trainLight();
-      }
-
-      if (history.length > sequenceLength) {
-        predictNext(colorId);
-      }
-
-      if (colorId === 0) {
-        document.getElementById('signal').style.display = 'flex';
-        setTimeout(() => document.getElementById('signal').style.display = 'none', 6000);
-        speak("Branco detectado!");
-      }
-    }
-
-    async function createModel() {
-      if (model) return;
-      model = tf.sequential();
-      model.add(tf.layers.lstm({
-        units: 96,
-        inputShape: [sequenceLength, 4],
-        returnSequences: false
-      }));
-      model.add(tf.layers.dropout(0.25));
-      model.add(tf.layers.dense({units: 48, activation: 'relu'}));
-      model.add(tf.layers.dense({units: 3, activation: 'softmax'}));
-
-      model.compile({
-        optimizer: 'adam',
-        loss: 'categoricalCrossentropy',
-        metrics: ['accuracy']
-      });
-    }
-
-    async function trainLight() {
-      await createModel();
-
-      const maxExamples = 400;
-      const start = Math.max(0, history.length - maxExamples - sequenceLength);
-      const data = history.slice(start);
-
-      if (data.length < sequenceLength + 10) return;
-
-      const inputs = [];
-      const labels = [];
-
-      for (let i = sequenceLength; i < data.length; i++) {
-        const seq = [];
-        for (let j = 0; j < sequenceLength; j++) {
-          const item = data[i - 1 - j];
-          const oneHot = [0,0,0]; oneHot[item.color] = 1;
-          seq.push([...oneHot, item.roll / 14]);
+    function startSystem() {
+        if(document.getElementById('key-input').value === GHOST_KEY) {
+            document.getElementById('auth-overlay').style.display = 'none';
+            initMonitor();
+        } else {
+            alert("CHAVE INCORRETA");
         }
-        inputs.push(seq);
-        const next = data[i - sequenceLength].color;
-        const label = [0,0,0]; label[next] = 1;
-        labels.push(label);
-      }
+    }
 
-      if (inputs.length === 0) return;
-
-      const xs = tf.tensor3d(inputs);
-      const ys = tf.tensor2d(labels);
-
-      try {
-        await model.fit(xs, ys, {
-          epochs: 8,
-          batchSize: 16,
-          shuffle: true,
-          verbose: 0
+    function initMonitor() {
+        document.getElementById('status-text').innerText = "FANTASMA ATIVO: LENDO DOUBLE";
+        
+        // Simulação de leitura via MutationObserver (Ajustado para Mobile)
+        const observer = new MutationObserver(() => {
+            // No celular, os seletores podem variar, pegamos os mais comuns
+            const results = document.querySelectorAll('[class*="recent-results"] .entry, [class*="ResultRow"] div, .roulette-history div');
+            
+            if(results.length > 0) {
+                const val = parseInt(results[0].innerText.replace(/\D/g, ''));
+                if(!isNaN(val) && (historyData.length === 0 || val !== historyData[0].num)) {
+                    let cor = (val === 0) ? 0 : (val <= 7 ? 1 : 2);
+                    historyData.unshift({num: val, cor: cor});
+                    if(historyData.length > 15) historyData.pop();
+                    analyze();
+                }
+            }
         });
-      } finally {
-        tf.dispose([xs, ys]);
-      }
+
+        observer.observe(document.body, { childList: true, subtree: true });
     }
 
-    async function predictNext(actualColor = null) {
-      if (!model) await createModel();
-      if (history.length < sequenceLength) return;
+    function analyze() {
+        const h = historyData;
+        if(h.length < 4) return;
 
-      const seq = [];
-      for (let j = 0; j < sequenceLength; j++) {
-        const item = history[j];
-        const oneHot = [0,0,0]; oneHot[item.color] = 1;
-        seq.push([...oneHot, item.roll / 14]);
-      }
+        let msg = "AGUARDANDO PADRÃO...";
+        let signal = "---";
+        const lastColor = h[0].cor;
 
-      const input = tf.tensor3d([seq]);
-      let pred;
-      try {
-        pred = model.predict(input);
-        const probs = await pred.data();
-        const idx = probs.indexOf(Math.max(...probs));
-        const prob = Math.round(probs[idx] * 100);
-        const predColor = colorNames[idx];
-
-        const whiteProb = Math.round(probs[0] * 100);
-        const trend = whiteProb > 22 ? ` ↑ Branco (${whiteProb}%)` : '';
-
-        document.getElementById('prediction').innerHTML =
-          `Previsão: <strong style="color:${idx===0?'white':idx===1?'#ff4444':'#444'}">${predColor}</strong> (${prob}%) ${trend}`;
-
-        speak(`Próxima: ${predColor} (${prob}%).${trend?' Cuidado branco.':''}`);
-
-        // Acurácia rolling simples
-        if (actualColor !== null && rollingPreds.length > 0) {
-          const prev = rollingPreds.shift();
-          if (prev === actualColor) rollingCorrect++;
-          rollingTotal++;
-          if (rollingPreds.length > 50) rollingPreds.shift();
-          const acc = rollingTotal > 0 ? Math.round((rollingCorrect / rollingTotal) * 100) : 0;
-          document.getElementById('accuracy').textContent = `Acurácia ≈ ${acc}%`;
+        // Lógica de 95% - Exaustão
+        let streak = 1;
+        for(let i=0; i<h.length-1; i++) {
+            if(h[i].cor === h[i+1].cor && h[i].cor !== 0) streak++;
+            else break;
         }
-        rollingPreds.push(idx);
-      } finally {
-        tf.dispose([input, pred]);
-      }
+
+        if(streak >= 4) {
+            const target = (lastColor === 1) ? "PRETO" : "VERMELHO";
+            msg = `<span class="high-conf">SINAL DE ALTA PRECISÃO (97%)</span>`;
+            signal = `ENTRAR NO ${target}`;
+            playAlert();
+        } 
+        // Lógica de Xadrez
+        else if(h[0].cor !== h[1].cor && h[1].cor !== h[2].cor && h[2].cor !== h[3].cor) {
+            const target = (h[0].cor === 1) ? "VERMELHO" : "PRETO";
+            msg = `<span class="high-conf">QUEBRA DE XADREZ (95%)</span>`;
+            signal = `ENTRAR NO ${target}`;
+            playAlert();
+        }
+
+        document.getElementById('status-text').innerHTML = msg;
+        document.getElementById('signal-text').innerHTML = signal;
+        
+        // Atualizar Dots
+        document.getElementById('history-dots').innerHTML = h.map(x => `<div class="dot c-${x.cor}"></div>`).join('');
     }
-
-    async function checkPassword() {
-      const pass = document.getElementById('password-input').value.trim();
-      if (pass !== "jarvis102") {
-        speak("Negado");
-        const el = document.getElementById('password-input');
-        el.style.borderBottomColor = '#ff3366';
-        setTimeout(() => el.style.borderBottomColor = 'rgba(255,255,255,0.3)', 700);
-        return;
-      }
-
-      document.getElementById('loading-overlay').style.display = 'none';
-      isActive = true;
-      loadHistory();
-      speak("IA leve ativada. Monitorando Blaze Double.");
-
-      if (history.length > sequenceLength) {
-        await trainLight();
-        await predictNext();
-      }
-
-      connect();
-    }
-
-    function connect() {
-      const status = document.getElementById('status');
-      status.textContent = "Conectando...";
-
-      ws = new WebSocket('wss://api-v2.blaze.com/replication/?EIO=3&transport=websocket');
-
-      ws.onopen = () => {
-        status.textContent = "Conectado";
-        ws.send('42["join","doubles"]');
-      };
-
-      ws.onmessage = e => {
-        if (typeof e.data !== 'string' || !e.data.startsWith('42')) return;
-        try {
-          const [, msg] = JSON.parse(e.data.slice(2));
-          if (msg?.[0] === 'double' && msg[1]) {
-            const d = msg[1];
-            updateHistory(d.color, d.roll);
-            status.textContent = `${colorNames[d.color]} (${d.roll}) | Total: ${history.length}`;
-          }
-        } catch {}
-      };
-
-      ws.onclose = () => {
-        if (isActive) setTimeout(connect, 7000);
-        status.textContent = "Reconectando...";
-      };
-    }
-
-    document.getElementById('activate-btn').onclick = checkPassword;
-    document.getElementById('password-input').onkeydown = e => { if (e.key === 'Enter') checkPassword(); };
-    document.getElementById('password-input').focus();
-  </script>
+</script>
 </body>
 </html>
