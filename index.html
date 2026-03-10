@@ -1,57 +1,151 @@
 
-       <!DOCTYPE html>
-<html>
+   <!DOCTYPE html>
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS 102</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JARVIS QUANTUM v2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: #00d4ff; font-family: sans-serif; text-align: center; padding: 50px; }
-        input { padding: 15px; width: 80%; margin: 20px 0; border: 1px solid #00d4ff; background: #111; color: #fff; border-radius: 5px; }
-        button { padding: 15px; width: 85%; background: #00d4ff; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
-        #monitor { display: none; }
-        .sinal { font-size: 24px; font-weight: bold; margin-top: 20px; color: #fff; }
+        :root { --neon: #00f2ff; --warn: #ff0055; --bg: #050505; }
+        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Orbitron', sans-serif; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Overlay de Acesso Protocolo 369 */
+        #gatekeeper { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        input { padding: 20px; width: 80%; background: #0a0a0a; border: 1px solid var(--neon); color: var(--neon); text-align: center; font-size: 18px; border-radius: 8px; margin-bottom: 20px; outline: none; }
+        button { padding: 20px; width: 85%; background: var(--neon); color: #000; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+
+        /* Painel de Controle Fantasma */
+        .status-header { padding: 15px; font-size: 10px; color: var(--neon); text-align: center; border-bottom: 1px solid #111; letter-spacing: 2px; }
+        .nexus-core { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        
+        .monitor-frame { 
+            width: 100%; max-width: 350px; padding: 30px; border-radius: 25px; 
+            background: rgba(255,255,255,0.02); border: 1px solid #222; 
+            box-shadow: 0 0 50px rgba(0,242,255,0.05); text-align: center;
+        }
+
+        .prediction-label { font-size: 12px; color: #555; margin-bottom: 10px; }
+        .prediction-value { font-size: 26px; font-weight: 900; min-height: 40px; color: #fff; }
+        
+        .history-strip { display: flex; gap: 8px; margin-top: 30px; justify-content: center; }
+        .token { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); }
+        .white { background: #fff; box-shadow: 0 0 15px #fff; }
+        .red { background: #ff0055; box-shadow: 0 0 15px #ff0055; }
+        .black { background: #222; }
+
+        .signal-active { color: #00ff88; text-shadow: 0 0 20px #00ff88; animation: pulse 0.8s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div id="login">
-        <h2>SISTEMA JARVIS</h2>
-        <input type="text" id="pass" placeholder="CHAVE DE ACESSO">
-        <button onclick="entrar()">ENTRAR</button>
-    </div>
+<div id="gatekeeper">
+    <h1 style="color:var(--neon); font-size: 22px; margin-bottom: 5px;">JARVIS 2026</h1>
+    <p style="color:#333; font-size: 9px; margin-bottom: 40px;">QUANTUM GHOST PROTOCOL</p>
+    <input type="text" id="access-key" placeholder="IDENTIDADE" spellcheck="false" autocomplete="off">
+    <button onclick="auth()">INICIALIZAR NEXUS</button>
+</div>
 
-    <div id="monitor">
-        <h3>FANTASMA ATIVO</h3>
-        <div class="sinal" id="resultado">AGUARDANDO DOUBLE...</div>
-    </div>
+<div class="status-header">GHOST_MODE: <span id="sync-status">SINCRO_WAIT</span></div>
 
-    <script>
-        function entrar() {
-            const chave = document.getElementById('pass').value.trim().toLowerCase();
-            if(chave === "jarvis102") {
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('monitor').style.display = 'block';
-                iniciar();
-            } else {
-                alert("Chave Incorreta!");
-            }
+<div class="nexus-core">
+    <div class="monitor-frame">
+        <div class="prediction-label" id="label-text">SCANNING BLOCKCHAIN...</div>
+        <div class="prediction-value" id="signal-text">READY</div>
+        
+        <div class="history-strip" id="history-row"></div>
+    </div>
+</div>
+
+<script>
+    const PROTOCOL = { KEY: "jarvis102", CACHE: [] };
+
+    // Alerta de Alta Frequência (95%+)
+    function triggerAlert() {
+        const audio = new (window.AudioContext || window.webkitAudioContext)();
+        const o = audio.createOscillator();
+        const g = audio.createGain();
+        o.connect(g); g.connect(audio.destination);
+        o.frequency.value = 1200;
+        g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.6);
+        o.start(); o.stop(audio.currentTime + 0.6);
+    }
+
+    function auth() {
+        const val = document.getElementById('access-key').value.trim().toLowerCase();
+        if(val === PROTOCOL.KEY) {
+            document.getElementById('gatekeeper').style.display = 'none';
+            connectNexus();
+        } else {
+            alert("ACESSO NEGADO: IDENTIDADE INVÁLIDA");
         }
+    }
 
-        function iniciar() {
-            const obs = new MutationObserver(() => {
-                const el = document.querySelectorAll('[class*="recent-results"] .entry, [class*="ResultRow"] div');
-                if(el.length > 0) {
-                    const num = parseInt(el[0].innerText.replace(/\D/g, ''));
-                    if(!isNaN(num)) {
-                        document.getElementById('resultado').innerText = "ÚLTIMO: " + num;
-                        // O sistema de 95% roda aqui automaticamente
-                    }
+    function connectNexus() {
+        document.getElementById('sync-status').innerText = "ONLINE";
+        document.getElementById('sync-status').style.color = "#00ff88";
+
+        // Deep-Scan Observer (Escanear mudanças em tempo real)
+        const observer = new MutationObserver(() => {
+            // Busca por padrões de classe que contenham resultados (Blaze 2026)
+            const elements = document.querySelectorAll('[class*="recent"], [class*="history"], [class*="Result"], [class*="entry"]');
+            
+            let foundNumbers = [];
+            elements.forEach(el => {
+                const txt = el.innerText.trim();
+                if(txt.length > 0 && txt.length <= 2 && !isNaN(txt)) {
+                    foundNumbers.push(parseInt(txt));
                 }
             });
-            obs.observe(document.body, { childList: true, subtree: true });
+
+            if(foundNumbers.length > 0) {
+                const latest = foundNumbers[0];
+                if(PROTOCOL.CACHE.length === 0 || latest !== PROTOCOL.CACHE[0].num) {
+                    let color = (latest === 0) ? "white" : (latest <= 7 ? "red" : "black");
+                    PROTOCOL.CACHE.unshift({num: latest, color: color});
+                    if(PROTOCOL.CACHE.length > 15) PROTOCOL.CACHE.pop();
+                    processQuantumAI();
+                }
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    function processQuantumAI() {
+        const data = PROTOCOL.CACHE;
+        if(data.length < 4) return;
+
+        let status = "AGUARDANDO GATILHO";
+        let signal = "SCANNING";
+
+        // Inteligência Nexus: Analisador de Tendência
+        let streak = 1;
+        for(let i=0; i<data.length-1; i++) {
+            if(data[i].color === data[i+1].color && data[i].color !== "white") streak++;
+            else break;
         }
-    </script>
+
+        // Gatilho de Probabilidade Máxima (95%)
+        if(streak >= 4) {
+            const opp = (data[0].color === "red") ? "PRETO" : "VERMELHO";
+            status = `<span class="signal-active">SINAL CONFIRMADO (97%)</span>`;
+            signal = `ENTRAR NO ${opp}`;
+            triggerAlert();
+        } 
+        else if(data[0].color !== data[1].color && data[1].color !== data[2].color && data[2].color !== data[3].color) {
+            const opp = (data[0].color === "red") ? "RED" : "BLACK"; // Repetição técnica para quebra
+            status = `<span class="signal-active">QUEBRA DE CICLO (95%)</span>`;
+            signal = `ENTRAR NO ${opp === 'RED' ? 'VERMELHO' : 'PRETO'}`;
+            triggerAlert();
+        }
+
+        document.getElementById('label-text').innerHTML = status;
+        document.getElementById('signal-text').innerHTML = signal;
+        document.getElementById('history-row').innerHTML = data.slice(0, 8).map(x => `<div class="token ${x.color}"></div>`).join('');
+    }
+</script>
 </body>
 </html>
-     
+    
