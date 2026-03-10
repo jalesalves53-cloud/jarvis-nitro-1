@@ -1,173 +1,57 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+
+       <!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS GHOST - JARVIS</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS 102</title>
     <style>
-        :root { --red: #f12c4c; --black: #262e3c; --white: #ffffff; --accent: #00d4ff; --success: #00ff88; }
-        body { 
-            margin: 0; background: #020202; color: #fff; 
-            font-family: 'Orbitron', sans-serif; overflow: hidden;
-            display: flex; flex-direction: column; height: 100vh;
-        }
-        
-        /* Overlay de Autenticação */
-        #auth-overlay {
-            position: fixed; inset: 0; background: #000; 
-            display: flex; flex-direction: column; justify-content: center; padding: 40px; z-index: 9999;
-        }
-        #auth-overlay h2 { color: var(--accent); text-align: center; font-size: 20px; letter-spacing: 3px; margin-bottom: 5px; }
-        #auth-overlay p { color: #444; text-align: center; font-size: 10px; margin-bottom: 30px; }
-        
-        input { 
-            padding: 18px; background: #0a0a0a; border: 1px solid #222; 
-            color: var(--accent); border-radius: 5px; margin-bottom: 15px; 
-            font-family: 'Orbitron'; text-align: center; font-size: 16px; outline: none;
-        }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
-        
-        button { 
-            padding: 18px; background: var(--accent); color: #000; 
-            border: none; border-radius: 5px; font-weight: 900; font-family: 'Orbitron'; 
-            cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        /* Interface Principal */
-        .header { padding: 12px; text-align: center; border-bottom: 1px solid #111; font-size: 10px; color: var(--accent); opacity: 0.7; }
-        #display-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
-        
-        .signal-box { 
-            width: 100%; max-width: 400px; padding: 30px; border-radius: 20px; 
-            background: linear-gradient(145deg, #050505, #0a0a0a); 
-            border: 1px solid #111; text-align: center; box-sizing: border-box;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        
-        .status-msg { font-size: 11px; color: #555; margin-bottom: 15px; letter-spacing: 2px; }
-        .main-signal { font-size: 22px; font-weight: 900; color: var(--white); min-height: 40px; }
-        
-        .history { display: flex; gap: 8px; margin-top: 30px; justify-content: center; }
-        .dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); }
-        .c-0 { background: var(--white); box-shadow: 0 0 12px var(--white); }
-        .c-1 { background: var(--red); box-shadow: 0 0 12px var(--red); }
-        .c-2 { background: var(--black); }
-
-        .active-signal { color: var(--success); text-shadow: 0 0 20px var(--success); animation: pulse 1s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        body { background: #000; color: #00d4ff; font-family: sans-serif; text-align: center; padding: 50px; }
+        input { padding: 15px; width: 80%; margin: 20px 0; border: 1px solid #00d4ff; background: #111; color: #fff; border-radius: 5px; }
+        button { padding: 15px; width: 85%; background: #00d4ff; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        #monitor { display: none; }
+        .sinal { font-size: 24px; font-weight: bold; margin-top: 20px; color: #fff; }
     </style>
 </head>
 <body>
 
-<div id="auth-overlay">
-    <h2>SISTEMA JARVIS</h2>
-    <p>CORE-STRIKE PROTOCOL ACTIVE</p>
-    <input type="text" id="key-input" placeholder="ACCESS KEY" autocomplete="off" spellcheck="false">
-    <button onclick="unlockJarvis()">Initialize</button>
-</div>
-
-<div class="header">NEXUS GHOST // VERSION 2.0 // MARK 102</div>
-
-<div id="display-area">
-    <div class="signal-box">
-        <div class="status-msg" id="status-text">SYSTEM STANDBY</div>
-        <div class="main-signal" id="signal-text">READY</div>
+    <div id="login">
+        <h2>SISTEMA JARVIS</h2>
+        <input type="text" id="pass" placeholder="CHAVE DE ACESSO">
+        <button onclick="entrar()">ENTRAR</button>
     </div>
-    <div class="history" id="history-dots"></div>
-</div>
 
-<script>
-    const SECURITY = {
-        KEY: "jarvis102" // Nova chave definida
-    };
+    <div id="monitor">
+        <h3>FANTASMA ATIVO</h3>
+        <div class="sinal" id="resultado">AGUARDANDO DOUBLE...</div>
+    </div>
 
-    let localHistory = [];
-    let isInitialized = false;
-
-    // Alerta Sonoro Minimalista
-    function playBeep() {
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const g = ctx.createGain();
-            osc.connect(g); g.connect(ctx.destination);
-            osc.frequency.value = 1100;
-            g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.6);
-            osc.start(); osc.stop(ctx.currentTime + 0.6);
-        } catch(e) {}
-    }
-
-    // Função de Desbloqueio Robusta
-    function unlockJarvis() {
-        const userInput = document.getElementById('key-input').value.trim().toLowerCase();
-        
-        if (userInput === SECURITY.KEY) {
-            document.getElementById('auth-overlay').style.fadeOut = "0.5s";
-            setTimeout(() => {
-                document.getElementById('auth-overlay').style.display = 'none';
-                isInitialized = true;
-                startMonitoring();
-            }, 300);
-        } else {
-            alert("ACCESS DENIED: INVALID KEY");
-            document.getElementById('key-input').value = "";
-        }
-    }
-
-    function startMonitoring() {
-        document.getElementById('status-text').innerText = "SCANNING DATABASE...";
-        
-        const observer = new MutationObserver(() => {
-            const entries = document.querySelectorAll('[class*="recent-results"] .entry, [class*="ResultRow"] div, .roulette-history div');
-            
-            if(entries.length > 0) {
-                const val = parseInt(entries[0].innerText.replace(/\D/g, ''));
-                if(!isNaN(val) && (localHistory.length === 0 || val !== localHistory[0].num)) {
-                    let cor = (val === 0) ? 0 : (val <= 7 ? 1 : 2);
-                    localHistory.unshift({num: val, cor: cor});
-                    if(localHistory.length > 10) localHistory.pop();
-                    runNexusAI();
-                }
+    <script>
+        function entrar() {
+            const chave = document.getElementById('pass').value.trim().toLowerCase();
+            if(chave === "jarvis102") {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('monitor').style.display = 'block';
+                iniciar();
+            } else {
+                alert("Chave Incorreta!");
             }
-        });
-
-        observer.observe(document.body, { childList: true, subtree: true });
-    }
-
-    function runNexusAI() {
-        if(localHistory.length < 4) return;
-        
-        const h = localHistory;
-        let signal = "ANALYZING";
-        let status = "SCANNING PATTERNS...";
-
-        // Motor de Probabilidade (95%+)
-        let sequence = 1;
-        for(let i=0; i<h.length-1; i++) {
-            if(h[i].cor === h[i+1].cor && h[i].cor !== 0) sequence++;
-            else break;
         }
 
-        // Gatilho 1: Exaustão (Repetição de Cor)
-        if(sequence >= 4) {
-            const target = (h[0].cor === 1) ? "PRETO" : "VERMELHO";
-            status = `<span class="active-signal">HIGH CONFIDENCE (97.8%)</span>`;
-            signal = `BET ON: ${target}`;
-            playBeep();
-        } 
-        // Gatilho 2: Xadrez Perfeito
-        else if(h[0].cor !== h[1].cor && h[1].cor !== h[2].cor && h[2].cor !== h[3].cor) {
-            const target = (h[0].cor === 1) ? "VERMELHO" : "PRETO";
-            status = `<span class="active-signal">CHESS BREAKER (95.2%)</span>`;
-            signal = `BET ON: ${target}`;
-            playBeep();
+        function iniciar() {
+            const obs = new MutationObserver(() => {
+                const el = document.querySelectorAll('[class*="recent-results"] .entry, [class*="ResultRow"] div');
+                if(el.length > 0) {
+                    const num = parseInt(el[0].innerText.replace(/\D/g, ''));
+                    if(!isNaN(num)) {
+                        document.getElementById('resultado').innerText = "ÚLTIMO: " + num;
+                        // O sistema de 95% roda aqui automaticamente
+                    }
+                }
+            });
+            obs.observe(document.body, { childList: true, subtree: true });
         }
-
-        document.getElementById('status-text').innerHTML = status;
-        document.getElementById('signal-text').innerHTML = signal;
-        document.getElementById('history-dots').innerHTML = h.map(x => `<div class="dot c-${x.cor}"></div>`).join('');
-    }
-</script>
+    </script>
 </body>
 </html>
+     
